@@ -58,11 +58,7 @@
       if (speed > 8 && performance.now() - lastSpawn > 26) { spawn(pointer.x, pointer.y, speed, Math.min(3, Math.ceil(speed / 22))); lastSpawn = performance.now(); }
     }, { passive: true });
     addEventListener('pointerleave', () => { pointer.visible = false; cursor.style.opacity = '0'; });
-    addEventListener('pointerdown', () => {
-      spawn(pointer.x, pointer.y, 24, 12);
-      const flash = $('.flash');
-      if (flash) { flash.classList.remove('fire'); requestAnimationFrame(() => flash.classList.add('fire')); }
-    });
+    addEventListener('pointerdown', () => { spawn(pointer.x, pointer.y, 24, 12); $('.flash').classList.remove('fire'); requestAnimationFrame(() => $('.flash').classList.add('fire')); });
     $$('[data-cursor]').forEach(section => {
       section.addEventListener('pointerenter', () => { cursorMode.textContent = section.dataset.cursor; });
     });
@@ -90,13 +86,11 @@
     });
 
     const card = $('.credential');
-    if (card) {
-      card.addEventListener('pointermove', event => {
-        const rect = card.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width; const y = (event.clientY - rect.top) / rect.height;
-        card.style.setProperty('--ry', `${(x - .5) * 18}deg`); card.style.setProperty('--rx', `${(.5 - y) * 14}deg`); card.style.setProperty('--gx', `${x * 130 - 30}%`);
-      });
-      card.addEventListener('pointerleave', () => { card.style.setProperty('--ry', '0deg'); card.style.setProperty('--rx', '0deg'); card.style.setProperty('--gx', '-100%'); });
-    }
+    card.addEventListener('pointermove', event => {
+      const rect = card.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width; const y = (event.clientY - rect.top) / rect.height;
+      card.style.setProperty('--ry', `${(x - .5) * 18}deg`); card.style.setProperty('--rx', `${(.5 - y) * 14}deg`); card.style.setProperty('--gx', `${x * 130 - 30}%`);
+    });
+    card.addEventListener('pointerleave', () => { card.style.setProperty('--ry', '0deg'); card.style.setProperty('--rx', '0deg'); card.style.setProperty('--gx', '-100%'); });
   }
 
   // Scramble is restrained to navigation and resolves to the accessible source text.
@@ -114,13 +108,13 @@
 
   // Scroll turns the future-photo contact sheet into a lateral film strip.
   const sheet = $('.contact-sheet');
-  if (sheet && !reduced) addEventListener('scroll', () => {
+  if (!reduced) addEventListener('scroll', () => {
     const rect = $('#archive').getBoundingClientRect();
     if (rect.top < innerHeight && rect.bottom > 0) sheet.style.setProperty('--sheet-x', `${Math.max(-sheet.scrollWidth + innerWidth, Math.min(0, -rect.top * .28))}px`);
   }, { passive: true });
 
   // Mobile gets a tactile Black Card tilt without keeping a pointer-only effect.
-  $('.credential')?.addEventListener('click', event => {
+  $('.credential').addEventListener('click', event => {
     if (finePointer) return;
     event.currentTarget.style.setProperty('--ry', event.currentTarget.style.getPropertyValue('--ry') === '8deg' ? '0deg' : '8deg');
   });
@@ -129,8 +123,8 @@
     const box = $('.transmission'); box.textContent = message; box.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => box.classList.remove('show'), 2600);
   };
   let secretCount = 0;
-  $('.secret-trigger')?.addEventListener('click', () => { secretCount++; toast(secretCount < 3 ? `CHANNEL ${String(secretCount).padStart(2, '0')} UNLOCKED` : 'YOU FOUND THE AFTER-HOURS FREQUENCY'); });
-  $('[data-easter="414"]')?.addEventListener('click', () => toast('43.0389° N / 87.9065° W / SIGNAL FOUND'));
+  $('.secret-trigger').addEventListener('click', () => { secretCount++; toast(secretCount < 3 ? `CHANNEL ${String(secretCount).padStart(2, '0')} UNLOCKED` : 'YOU FOUND THE AFTER-HOURS FREQUENCY'); });
+  $('[data-easter="414"]').addEventListener('click', () => toast('43.0389° N / 87.9065° W / SIGNAL FOUND'));
   let keys = '';
   addEventListener('keydown', event => { keys = (keys + event.key).slice(-3); if (keys === '414') toast('HOME FREQUENCY ACCEPTED'); });
 
