@@ -2,170 +2,390 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>THRILLWAUKEE — Milwaukee After Dark</title>
-  <meta name="description" content="Thrillwaukee transmits Milwaukee's nights worth showing up for. Buy admission to the next event or join the list for first access.">
-  <meta name="theme-color" content="#09090b">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thrillwaukee — Milwaukee After Dark</title>
+  <meta name="description" content="Milwaukee's independent nightlife list. Get first access to Thrillwaukee parties, ticket drops, location reveals, and founding Black Card membership.">
+  <meta name="theme-color" content="#08060d">
   <meta name="color-scheme" content="dark">
-  <meta name="robots" content="index,follow">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://thrillwaukee.com/">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thrillwaukee.com/">
-  <meta property="og:site_name" content="THRILLWAUKEE">
-  <meta property="og:title" content="THRILLWAUKEE — Milwaukee After Dark">
-  <meta property="og:description" content="A cultural transmission originating in Milwaukee after dark.">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="THRILLWAUKEE — Milwaukee After Dark">
-  <meta name="twitter:description" content="A cultural transmission originating in Milwaukee after dark.">
+  <meta property="og:site_name" content="Thrillwaukee">
+  <meta property="og:title" content="Thrillwaukee — Milwaukee After Dark">
+  <meta property="og:description" content="The nights worth showing up for. Get on Milwaukee's independent nightlife list.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Thrillwaukee — Milwaukee After Dark">
+  <meta name="twitter:description" content="The nights worth showing up for. Get on Milwaukee's independent nightlife list.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;650&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #08060d;
+      --surface: #100d18;
+      --surface-2: #181322;
+      --paper: #f4f0e8;
+      --muted: #aaa4b4;
+      --line: rgba(244, 240, 232, .14);
+      --acid: #c8ff3d;
+      --violet: #8a4dff;
+      --violet-dark: #5421bd;
+      --max: 1180px;
+      --pad: clamp(1.25rem, 4vw, 3rem);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; overflow-x: hidden; background: var(--black); color: var(--paper); font-family: "DM Sans", sans-serif; line-height: 1.55; }
+    body.menu-open { overflow: hidden; }
+    a { color: inherit; }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    img, svg { display: block; max-width: 100%; }
+    ::selection { background: var(--acid); color: var(--black); }
+    :focus-visible { outline: 3px solid var(--acid); outline-offset: 4px; }
+    .skip-link { position: fixed; z-index: 1000; top: .75rem; left: .75rem; padding: .65rem 1rem; transform: translateY(-180%); background: var(--acid); color: var(--black); font-weight: 700; }
+    .skip-link:focus { transform: none; }
+    .wrap { width: min(100% - (var(--pad) * 2), var(--max)); margin-inline: auto; }
+    .eyebrow { margin: 0; color: var(--acid); font: 700 .7rem/1.2 "Space Mono", monospace; letter-spacing: .18em; text-transform: uppercase; }
+    .display { margin: 0; font: 400 clamp(3rem, 8vw, 7.5rem)/.84 "Archivo Black", sans-serif; letter-spacing: -.065em; text-transform: uppercase; }
+    .display em { color: var(--violet); font-style: normal; }
+    .button { display: inline-flex; min-height: 3.5rem; align-items: center; justify-content: center; gap: .75rem; padding: .9rem 1.35rem; border: 1px solid var(--acid); background: var(--acid); color: var(--black); font: 700 .72rem/1 "Space Mono", monospace; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s; }
+    .button::after { content: "↗"; font-size: 1rem; }
+    .button:hover { transform: translateY(-3px); box-shadow: 6px 6px 0 var(--violet); }
+    .button--ghost { border-color: var(--line); background: transparent; color: var(--paper); }
+
+    .site-header { position: absolute; z-index: 20; inset: 0 0 auto; height: 5.25rem; border-bottom: 1px solid var(--line); }
+    .nav { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .logo { position: relative; z-index: 22; font: 400 1.15rem/1 "Archivo Black", sans-serif; letter-spacing: -.045em; text-decoration: none; text-transform: uppercase; }
+    .logo span { color: var(--acid); }
+    .nav-links { display: flex; align-items: center; gap: clamp(1.5rem, 3vw, 2.75rem); }
+    .nav-links a { color: var(--muted); font: 700 .67rem/1 "Space Mono", monospace; letter-spacing: .12em; text-decoration: none; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--paper); }
+    .nav-links .nav-cta { padding: .75rem 1rem; border: 1px solid var(--paper); color: var(--paper); }
+    .menu-button { display: none; position: relative; z-index: 22; width: 2.8rem; height: 2.8rem; padding: .65rem; border: 0; background: transparent; color: var(--paper); cursor: pointer; }
+    .menu-button span { display: block; height: 2px; margin: 5px 0; background: currentColor; transition: transform .2s, opacity .2s; }
+
+    .hero { position: relative; min-height: max(47rem, 100svh); display: grid; align-items: end; overflow: hidden; padding: 9rem 0 4rem; isolation: isolate; }
+    .hero::before { content: ""; position: absolute; z-index: -3; inset: 0; background: radial-gradient(circle at 72% 32%, rgba(138,77,255,.28), transparent 27%), linear-gradient(120deg, #08060d 20%, #150c24 65%, #08060d); }
+    .hero::after { content: ""; position: absolute; z-index: -2; inset: 0; opacity: .24; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; pointer-events: none; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(15rem, .6fr); gap: 3rem; align-items: end; }
+    .hero-kicker { margin-bottom: 1.7rem; }
+    .hero-title { max-width: 9ch; font-size: clamp(4.6rem, 12.4vw, 10.5rem); text-wrap: balance; }
+    .hero-title span { display: inline-block; color: transparent; -webkit-text-stroke: 1px rgba(244,240,232,.65); }
+    .hero-side { padding-bottom: .8rem; }
+    .hero-side p { max-width: 28rem; margin: 0 0 1.75rem; color: var(--muted); font-size: clamp(1.05rem, 1.8vw, 1.3rem); }
+    .hero-side strong { color: var(--paper); }
+    .hero-meta { position: absolute; top: 50%; right: var(--pad); display: flex; align-items: center; gap: 1rem; transform: rotate(90deg) translateX(50%); transform-origin: right; color: var(--muted); font: 400 .62rem "Space Mono", monospace; letter-spacing: .17em; text-transform: uppercase; }
+    .hero-meta::before { content: ""; width: 4rem; height: 1px; background: var(--acid); }
+    .skyline { position: absolute; z-index: -1; right: -3%; bottom: -2px; width: min(62rem, 70vw); color: rgba(244,240,232,.065); }
+    .scroll-note { position: absolute; bottom: 4.2rem; left: max(var(--pad), calc((100% - var(--max)) / 2)); transform: translateX(-2rem) rotate(-90deg); transform-origin: left bottom; color: var(--muted); font: 400 .6rem "Space Mono", monospace; letter-spacing: .15em; text-transform: uppercase; }
+
+    .ticker { overflow: hidden; border-block: 1px solid var(--line); background: var(--acid); color: var(--black); }
+    .ticker-track { display: flex; width: max-content; animation: ticker 30s linear infinite; }
+    .ticker-group { display: flex; flex-shrink: 0; align-items: center; }
+    .ticker span { padding: .8rem 1.5rem; font: 700 .67rem "Space Mono", monospace; letter-spacing: .13em; text-transform: uppercase; }
+    .ticker span::after { content: "✦"; margin-left: 3rem; }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+
+    .manifesto { padding: clamp(6rem, 12vw, 11rem) 0; }
+    .manifesto-grid { display: grid; grid-template-columns: .55fr 1.45fr; gap: 3rem; }
+    .manifesto h2 { max-width: 13ch; font-size: clamp(2.7rem, 6.3vw, 6rem); }
+    .manifesto h2 span { color: var(--muted); }
+    .manifesto-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3.25rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+    .manifesto-copy p { margin: 0; color: var(--muted); }
+    .manifesto-copy strong { color: var(--paper); }
+
+    .edition { border-block: 1px solid var(--line); background: var(--surface); }
+    .edition-grid { min-height: 48rem; display: grid; grid-template-columns: 1fr 1fr; }
+    .edition-visual { position: relative; display: grid; place-items: center; overflow: hidden; border-right: 1px solid var(--line); background: radial-gradient(circle, rgba(138,77,255,.23), transparent 52%); }
+    .edition-number { position: absolute; inset: 1rem auto auto 1.3rem; color: var(--muted); font: 400 .65rem "Space Mono", monospace; letter-spacing: .15em; }
+    .member-card { position: relative; width: min(76%, 28rem); aspect-ratio: 1.586; overflow: hidden; padding: 1.5rem; border: 1px solid rgba(244,240,232,.32); border-radius: 1rem; background: linear-gradient(135deg, #191421, #070609 65%); box-shadow: 0 2.5rem 5rem rgba(0,0,0,.65), 0 0 4rem rgba(138,77,255,.15); transform: rotate(-5deg); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+    .member-card:hover { transform: rotate(-2deg) translateY(-.75rem); }
+    .member-card::before { content: ""; position: absolute; inset: -100% -30%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent); transform: rotate(25deg); }
+    .card-logo { font: 400 .9rem "Archivo Black", sans-serif; letter-spacing: -.04em; text-transform: uppercase; }
+    .card-logo span { color: var(--acid); }
+    .card-chip { width: 2.5rem; height: 1.8rem; margin-top: 2.8rem; border-radius: .3rem; background: linear-gradient(135deg, #8c8270, #f0e6c8 48%, #746c60); }
+    .card-id { position: absolute; left: 1.5rem; bottom: 1.5rem; font: 400 .67rem "Space Mono", monospace; letter-spacing: .16em; text-transform: uppercase; }
+    .card-mark { position: absolute; right: 1.5rem; bottom: 1.2rem; color: var(--violet); font: 400 2.2rem "Archivo Black", sans-serif; }
+    .edition-copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(3rem, 7vw, 6rem); }
+    .edition-copy h2 { margin: 1.2rem 0 1.5rem; font-size: clamp(3rem, 6vw, 5.5rem); }
+    .edition-lede { max-width: 33rem; margin: 0 0 2.5rem; color: var(--muted); font-size: 1.1rem; }
+    .perks { margin: 0 0 2.5rem; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+    .perks li { display: grid; grid-template-columns: 2rem 1fr; gap: .8rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .perks b { color: var(--acid); font: 700 .65rem "Space Mono", monospace; }
+    .perks span { color: var(--muted); }
+    .perks strong { color: var(--paper); }
+
+    .purchase { padding: clamp(5rem, 10vw, 9rem) 0; background: var(--paper); color: var(--black); }
+    .purchase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem, 8vw, 7rem); align-items: center; }
+    .purchase .eyebrow { color: var(--violet-dark); }
+    .purchase h2 { margin: 1rem 0 1.5rem; font-size: clamp(3rem, 6vw, 5.8rem); }
+    .purchase-copy > p:not(.eyebrow) { max-width: 37rem; color: #514c56; font-size: 1.08rem; }
+    .checkout-card { padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid #c9c3bd; background: #fff; box-shadow: 12px 12px 0 var(--violet); }
+    .checkout-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid #ded9d2; }
+    .checkout-top strong { font: 400 1.1rem "Archivo Black", sans-serif; text-transform: uppercase; }
+    .secure { font: 700 .58rem "Space Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .secure::before { content: "●"; margin-right: .4rem; color: #2f9e44; }
+    .checkout-body { padding: 1.6rem 0 .5rem; }
+    .checkout-body p { margin: 0 0 1.25rem; color: #615b65; font-size: .9rem; }
+    #stripe-checkout stripe-buy-button { display: block; width: 100%; }
+    .checkout-pending { padding: 1rem; border: 1px dashed #aaa3ab; color: #625c65; text-align: center; font: 700 .65rem/1.5 "Space Mono", monospace; letter-spacing: .06em; text-transform: uppercase; }
+    .checkout-foot { margin-top: 1.25rem; color: #756e77; font-size: .72rem; text-align: center; }
+
+    .list { position: relative; overflow: hidden; padding: clamp(6rem, 11vw, 10rem) 0; }
+    .list::after { content: "414"; position: absolute; z-index: -1; right: -2vw; bottom: -9vw; color: rgba(138,77,255,.07); font: 400 min(38vw, 34rem)/1 "Archivo Black", sans-serif; }
+    .list-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(3rem, 8vw, 7rem); }
+    .list-copy { align-self: start; position: sticky; top: 2rem; }
+    .list h2 { margin: 1rem 0 1.5rem; font-size: clamp(3.2rem, 7vw, 6.5rem); }
+    .list-copy > p:last-child { max-width: 26rem; color: var(--muted); }
+    .signup { padding: clamp(1.5rem, 4vw, 2.75rem); border: 1px solid var(--line); background: var(--surface); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { margin-bottom: 1.15rem; }
+    .field label { display: block; margin-bottom: .45rem; color: var(--muted); font: 700 .62rem "Space Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .field label span { color: var(--acid); }
+    .field input, .field select { width: 100%; min-height: 3.4rem; padding: .75rem .9rem; border: 1px solid var(--line); border-radius: 0; outline: 0; background: #0b0910; color: var(--paper); }
+    .field input:focus, .field select:focus { border-color: var(--acid); box-shadow: 0 0 0 1px var(--acid); }
+    .field input::placeholder { color: #716b79; }
+    .check { display: grid; grid-template-columns: auto 1fr; gap: .85rem; margin: .4rem 0 1.25rem; padding: 1rem; border: 1px solid var(--line); cursor: pointer; }
+    .check input { width: 1.15rem; height: 1.15rem; margin-top: .15rem; accent-color: var(--acid); }
+    .check strong { display: block; color: var(--paper); font-size: .86rem; }
+    .check span span { color: var(--muted); font-size: .78rem; }
+    .consent { color: #77717f; font-size: .7rem; }
+    .signup .button { width: 100%; margin-top: .5rem; }
+    .form-status { min-height: 1.5rem; margin: 1rem 0 0; color: var(--acid); font: 700 .7rem "Space Mono", monospace; text-align: center; }
+
+    .site-footer { border-top: 1px solid var(--line); padding: 3rem 0 2rem; }
+    .footer-top { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding-bottom: 3rem; }
+    .footer-logo { font-size: clamp(1.8rem, 4vw, 3.5rem); }
+    .socials { display: flex; gap: 1.5rem; }
+    .socials a { color: var(--muted); font: 700 .65rem "Space Mono", monospace; letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
+    .socials a:hover { color: var(--acid); }
+    .footer-bottom { display: flex; justify-content: space-between; gap: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: #6f6977; font-size: .68rem; }
+
+    .reveal { opacity: 0; transform: translateY(2rem); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (max-width: 780px) {
+      .nav-links { position: fixed; z-index: 21; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2rem; padding: var(--pad); visibility: hidden; opacity: 0; background: var(--black); transition: opacity .2s, visibility .2s; }
+      .nav-links a { font-size: 1.25rem; }
+      .menu-button { display: block; }
+      .menu-open .nav-links { visibility: visible; opacity: 1; }
+      .menu-open .menu-button span:first-child { transform: translateY(7px) rotate(45deg); }
+      .menu-open .menu-button span:nth-child(2) { opacity: 0; }
+      .menu-open .menu-button span:last-child { transform: translateY(-7px) rotate(-45deg); }
+      .hero { min-height: 47rem; padding-bottom: 3rem; }
+      .hero-grid, .manifesto-grid, .edition-grid, .purchase-grid, .list-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: clamp(4.2rem, 23vw, 7rem); }
+      .hero-side { max-width: 30rem; }
+      .hero-meta, .scroll-note { display: none; }
+      .skyline { width: 125vw; max-width: none; opacity: .7; }
+      .manifesto-grid { gap: 2rem; }
+      .manifesto-copy { grid-template-columns: 1fr; }
+      .edition-grid { min-height: 0; }
+      .edition-visual { min-height: 27rem; border-right: 0; border-bottom: 1px solid var(--line); }
+      .member-card { width: min(82%, 24rem); }
+      .edition-copy { padding-inline: var(--pad); }
+      .list-copy { position: static; }
+    }
+    @media (max-width: 520px) {
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .footer-top, .footer-bottom { align-items: flex-start; flex-direction: column; }
+      .socials { flex-wrap: wrap; }
+      .checkout-top { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
 </head>
 <body>
-  <a class="skip" href="#content">Skip to transmission</a>
-  <canvas id="signal-canvas" aria-hidden="true"></canvas>
-  <div class="cursor" aria-hidden="true"><span class="cursor-mode">SCAN</span><span class="cursor-cross"></span></div>
-  <div class="flash" aria-hidden="true"></div>
-  <div class="transmission" role="status" aria-live="polite"></div>
-
-  <header class="masthead">
-    <a class="wordmark" href="#opening" aria-label="THRILLWAUKEE home">THRILLWAUKEE</a>
-    <div class="channel" aria-hidden="true"><i></i> CH 04:14 / LIVE</div>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav"><span>MENU</span><i></i></button>
-    <nav id="nav" aria-label="Primary navigation">
-      <a href="#event" data-scramble>01 Attend</a>
-      <a href="#archive" data-scramble>02 Evidence</a>
-      <a href="#black-card" data-scramble>03 Access</a>
-      <a href="#list" data-scramble>04 Stay connected</a>
-    </nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="logo" href="#top" aria-label="Thrillwaukee home">Thrill<span>waukee</span></a>
+      <nav class="nav-links" id="site-nav" aria-label="Primary navigation">
+        <a href="#about">The move</a>
+        <a href="#black-card">Black Card</a>
+        <a href="#purchase">Purchase</a>
+        <a class="nav-cta" href="#list">Get on the list</a>
+      </nav>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
   </header>
 
-  <main id="content">
-    <section class="opening" id="opening" data-cursor="TUNE" aria-labelledby="opening-title">
-      <div class="opening-code">MKE / 43°02′N 87°54′W<br>TRANSMISSION 00414</div>
-      <div class="opening-time"><span data-clock>02:14:00</span><small>LOCAL / AFTER DARK</small></div>
-      <h1 id="opening-title"><span>THRILL</span><span>WAUKEE</span></h1>
-      <p class="opening-statement">THE CITY IS NOT ASLEEP.<br><b>YOU ARE JUST ON THE WRONG FREQUENCY.</b></p>
-      <a class="tune-link magnetic" href="#event"><span>ENTER THE SIGNAL</span><b>↓</b></a>
-      <div class="scope" aria-hidden="true"><i></i><i></i><i></i><i></i><span>LAKE / CITY / NIGHT</span></div>
-      <div class="scanline" aria-hidden="true"></div>
-    </section>
-
-    <aside class="warning-strip" aria-label="Thrillwaukee event notice">
-      <div><span>NEXT TRANSMISSION INCOMING</span><span>ADMISSION CHANNEL OPEN</span><span>MILWAUKEE / WISCONSIN</span><span aria-hidden="true">NEXT TRANSMISSION INCOMING</span><span aria-hidden="true">ADMISSION CHANNEL OPEN</span></div>
-    </aside>
-
-    <section class="event" id="event" data-cursor="ADMIT" aria-labelledby="event-title">
-      <header class="section-index"><b>01</b><span>NEXT TRANSMISSION</span><span>ATTEND / ATTEND / ATTEND</span></header>
-      <div class="event-stage">
-        <article class="ticket" aria-label="Next Thrillwaukee event admission manifest">
-          <div class="ticket-edge" aria-hidden="true"></div>
-          <div class="ticket-stamp">ISSUED<br>MKE</div>
-          <p class="ticket-kicker">ADMISSION MANIFEST · FALL 2026</p>
-          <h2 id="event-title">SIGNAL<br><em>NO. 001</em></h2>
-          <dl class="event-data">
-            <div><dt>Date</dt><dd>To be transmitted</dd></div>
-            <div><dt>Doors</dt><dd>After dark</dd></div>
-            <div><dt>Venue</dt><dd>Location withheld</dd></div>
-            <div><dt>District</dt><dd>Milwaukee, WI</dd></div>
-            <div><dt>Admission</dt><dd>Live inventory via Stripe</dd></div>
-            <div><dt>Status</dt><dd><i></i> On sale</dd></div>
-          </dl>
-          <p class="event-note">Location and final event detail are transmitted directly to confirmed guests. 18+ unless otherwise posted. Valid ID required.</p>
-          <div class="barcode" aria-hidden="true"></div>
-          <span class="serial">414-001-MKE</span>
-        </article>
-
-        <aside class="checkout" aria-label="Buy admission">
-          <div class="checkout-head"><span>ATTEND</span><b>SECURE CHECKOUT</b></div>
-          <p>One purchase path. No list signup required. Stripe handles payment details in its secure component.</p>
-          <div class="stripe-shell">
-            <stripe-buy-button
-              buy-button-id="buy_btn_1U3Q57E5YY3o38uXWTXLOwaN"
-              publishable-key="pk_live_51SMxJ3E5YY3o38uXgsltvaduOXnBJjsUFCEDRbyvIcGBDtlxkLiIm8p16rFvFBI1B4ZdpELLd3ixYMKT6Fw0nKcg000fuw5MDa">
-            </stripe-buy-button>
-          </div>
-          <small>Encrypted by Stripe · Live purchase control</small>
-        </aside>
-      </div>
-    </section>
-
-    <section class="interruption" data-cursor="MOVE" aria-label="Thrillwaukee statement">
-      <div class="mass-type" aria-hidden="true">THRILLWAUKEE</div>
-      <p>LOOKING FOR<br>SOMEONE?</p>
-      <h2>THEY'RE AT<br>ONE OF <button type="button" class="secret-trigger">OUR NIGHTS.</button></h2>
-      <div class="coordinates">UWM / MARQUETTE / MSOE / MATC / CITYWIDE</div>
-    </section>
-
-    <section class="archive" id="archive" data-cursor="DRAG" aria-labelledby="archive-title">
-      <header class="section-index"><b>02</b><span>FIELD EVIDENCE</span><span>AWAITING ORIGINAL MATERIAL</span></header>
-      <div class="archive-intro">
-        <h2 id="archive-title">NIGHTS<br>LEAVE<br><em>TRACES.</em></h2>
-        <p>A live contact sheet for the people, rooms, bridges, parking decks, and 2AM flashes that make the city ours. Original Thrillwaukee photography will drop directly into these frames.</p>
-      </div>
-      <div class="contact-sheet" aria-label="Photography placeholders for future Thrillwaukee event images">
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME 01</span><b>FLASH<br>MEMORY</b></div><figcaption>00:47 / Arrival / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME 02</span><b>ROOM<br>FULL</b></div><figcaption>01:36 / Floor / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME 03</span><b>LAKE<br>STATIC</b></div><figcaption>02:14 / Exterior / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME 04</span><b>LAST<br>CALL</b></div><figcaption>02:51 / Exit / Future image</figcaption></figure>
-      </div>
-    </section>
-
-    <section class="manifest" aria-labelledby="manifest-title">
-      <p class="manifest-label">THRILLWAUKEE IS / IS NOT</p>
-      <h2 id="manifest-title"><span>NOT RANDOM PROMOTERS</span><span>NOT A DEAD ROOM</span><span>NOT ANOTHER TOURISM AD</span><b>THE MOVE, TEXTED FIRST.</b></h2>
-      <div class="manifest-copy"><p>We throw the nights worth showing up to. Sharp production. The right crowd. No mystery links.</p><p>Event drops, presale codes, guest spots, and location reveals go to the list before they go anywhere else.</p></div>
-    </section>
-
-    <section class="black-card" id="black-card" data-cursor="ACCESS" aria-labelledby="black-card-title">
-      <header class="section-index light"><b>03</b><span>ACCESS OBJECT</span><span>FOUNDING 100 / PERMANENT ISSUE</span></header>
-      <div class="access-grid">
-        <div class="credential-wrap">
-          <div class="credential" tabindex="0" aria-label="THRILLWAUKEE Black Card founding member credential">
-            <div class="card-noise"></div><div class="card-glare"></div>
-            <span class="credential-brand">THRILLWAUKEE</span><span class="credential-class">ACCESS / BLACK</span>
-            <b>001</b><small>FOUNDING MEMBER<br>MILWAUKEE, WI<br>NON-TRANSFERABLE</small>
-            <div class="credential-stripe">THRILLWAUKEE / THRILLWAUKEE / 414</div>
-          </div>
-          <p>MOVE YOUR POINTER ACROSS THE OBJECT / TAP ON MOBILE</p>
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow hero-kicker">Milwaukee · 43.0389° N · After dark</p>
+          <h1 class="display hero-title" id="hero-title">The city <span>gets loud.</span></h1>
         </div>
-        <div class="access-copy">
-          <p>THE FIRST 100 ARE NOT CUSTOMERS.<br><b>THEY ARE THE FIRST WITNESSES.</b></p>
-          <h2 id="black-card-title">THE<br>BLACK<br>CARD.</h2>
-          <ol><li><b>01</b> Number 001–100, locked forever</li><li><b>02</b> Presale pricing on every event</li><li><b>03</b> Priority entry</li><li><b>04</b> First access to drops and guest spots</li></ol>
-          <a href="#list" class="mechanical magnetic"><span>REQUEST ACCESS</span><i>→</i></a>
+        <div class="hero-side">
+          <p><strong>Thrillwaukee makes the nights people talk about.</strong> Parties, pop-ups, and the city's next move—sent to the list first.</p>
+          <a class="button" href="#list">Get on the list</a>
+        </div>
+      </div>
+      <p class="hero-meta">Independent nightlife / Est. MKE</p>
+      <p class="scroll-note">Scroll to cross the bridge</p>
+      <svg class="skyline" viewBox="0 0 1000 350" aria-hidden="true">
+        <path fill="currentColor" d="M0 350V285h78v-50h22v50h56V178h25v-30h26v30h20v107h43V95h16V62h14V31h13v31h14v33h16v190h42v-86h31v-41h18v41h39v86h41V115h19V90h14V55h16v35h15v25h20v170h48v-61h79v61h45v-103h58v103h50v65H0Z"/>
+        <path d="M420 285V160M402 160h36M408 136h24M420 98v38" fill="none" stroke="currentColor" stroke-width="7"/>
+      </svg>
+    </section>
+
+    <div class="ticker" aria-label="Serving Milwaukee campuses">
+      <div class="ticker-track">
+        <div class="ticker-group"><span>UWM</span><span>Marquette</span><span>MSOE</span><span>MATC</span><span>Milwaukee</span><span>Fall '26</span></div>
+        <div class="ticker-group" aria-hidden="true"><span>UWM</span><span>Marquette</span><span>MSOE</span><span>MATC</span><span>Milwaukee</span><span>Fall '26</span></div>
+      </div>
+    </div>
+
+    <section class="manifesto" id="about" aria-labelledby="about-title">
+      <div class="wrap manifesto-grid reveal">
+        <p class="eyebrow">01 / The move</p>
+        <div>
+          <h2 class="display" id="about-title">Not another <span>random promoter</span> in your DMs.</h2>
+          <div class="manifesto-copy">
+            <p><strong>We throw the nights worth showing up to.</strong> No dead rooms. No mystery links. Just sharp production, the right crowd, and the details when you need them.</p>
+            <p>Built for Milwaukee's campuses, but never stuck on campus. Event drops, presale codes, and location reveals go to our list before they go anywhere else.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="list" id="list" data-cursor="CONNECT" aria-labelledby="list-title">
-      <header class="section-index"><b>04</b><span>STAY CONNECTED</span><span>TEXTS ONLY WHEN IT MATTERS</span></header>
-      <div class="list-grid">
-        <div><p class="huge-414" data-easter="414">414</p><h2 id="list-title">GET ON<br>THE LIST.</h2><p class="list-lede">Event drops. Presale codes. Location reveals. No feed to fight. No noise to filter.</p></div>
-        <form name="thrillwaukee-list" method="POST" data-netlify="true" netlify-honeypot="website" action="/success.html">
+    <section class="edition" id="black-card" aria-labelledby="card-title">
+      <div class="edition-grid">
+        <div class="edition-visual">
+          <span class="edition-number">LIMITED EDITION / 001—100</span>
+          <div class="member-card" aria-label="Illustration of a Thrillwaukee founding member card">
+            <div class="card-logo">Thrill<span>waukee</span></div>
+            <div class="card-chip" aria-hidden="true"></div>
+            <div class="card-id">Founding member<br>No. 001 / MKE</div>
+            <div class="card-mark">TW</div>
+          </div>
+        </div>
+        <div class="edition-copy reveal">
+          <p class="eyebrow">02 / Founding one hundred</p>
+          <h2 class="display" id="card-title">The <em>Black</em> Card.</h2>
+          <p class="edition-lede">The first 100 members get a permanent founding number. Once they're claimed, this edition never comes back.</p>
+          <ul class="perks">
+            <li><b>01</b><span><strong>Your number, locked forever.</strong> No. 001–100.</span></li>
+            <li><b>02</b><span><strong>Presale pricing.</strong> Before the public drop.</span></li>
+            <li><b>03</b><span><strong>Priority entry.</strong> Less line, more night.</span></li>
+            <li><b>04</b><span><strong>First access.</strong> Drops and guest spots, texted first.</span></li>
+          </ul>
+          <a class="button" href="#purchase">Claim a number</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="purchase" id="purchase" aria-labelledby="purchase-title">
+      <div class="wrap purchase-grid reveal">
+        <div class="purchase-copy">
+          <p class="eyebrow">03 / Founding access</p>
+          <h2 class="display" id="purchase-title">Make it <em>official.</em></h2>
+          <p>Secure your place in the founding 100. Your checkout is processed securely by Stripe; Thrillwaukee never sees or stores your full card details.</p>
+        </div>
+        <div class="checkout-card">
+          <div class="checkout-top">
+            <strong>Thrillwaukee Black Card</strong>
+            <span class="secure">Secure checkout</span>
+          </div>
+          <div class="checkout-body" id="stripe-checkout">
+            <p>Founding membership · Limited to 100 numbered members</p>
+            <!-- STRIPE: Replace the placeholder below with the exact Stripe script and stripe-buy-button embed supplied by the account owner. -->
+            <div class="checkout-pending" role="status">Checkout opens when the official Stripe button is connected.</div>
+          </div>
+          <p class="checkout-foot">Payments are handled by Stripe's encrypted checkout. No secret keys belong in this site.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="list" id="list" aria-labelledby="list-title">
+      <div class="wrap list-grid">
+        <div class="list-copy reveal">
+          <p class="eyebrow">04 / Stay in the know</p>
+          <h2 class="display" id="list-title">Get on <em>the list.</em></h2>
+          <p>Event drops, presale codes, and location reveals. Only when it matters—never noise.</p>
+        </div>
+        <form class="signup reveal" name="thrillwaukee-list" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="thrillwaukee-list">
-          <p class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></p>
-          <div class="field"><label for="first-name">01 / First name <b>*</b></label><input id="first-name" name="first_name" autocomplete="given-name" required placeholder="TYPE HERE"></div>
-          <div class="field"><label for="phone">02 / Phone <b>*</b></label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="(414) 555-0199"></div>
-          <div class="field"><label for="email">03 / Email <b>*</b></label><input id="email" name="email" type="email" autocomplete="email" required placeholder="YOU@SCHOOL.EDU"></div>
-          <div class="field field-split"><div><label for="campus">04 / Campus <b>*</b></label><select id="campus" name="campus" required><option value="" disabled selected>SELECT</option><option>UWM</option><option>Marquette</option><option>MSOE</option><option>MATC</option><option>Other / not in school</option></select></div><div><label for="birthday">05 / Birthday</label><input id="birthday" name="birthday" type="date" autocomplete="bday"></div></div>
-          <label class="access-check" for="card-interest"><input id="card-interest" name="black_card_interest" value="yes" type="checkbox"><span><b>BLACK CARD SIGNAL</b> Notify me if a founding number remains.</span></label>
+          <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+          <div class="field"><label for="first-name">First name <span>*</span></label><input id="first-name" name="first_name" autocomplete="given-name" placeholder="Your name" required></div>
+          <div class="form-row">
+            <div class="field"><label for="phone">Phone <span>*</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(414) 555-0199" required></div>
+            <div class="field"><label for="email">Email <span>*</span></label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@school.edu" required></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label for="campus">Campus <span>*</span></label><select id="campus" name="campus" required><option value="" selected disabled>Choose yours</option><option>UWM</option><option>Marquette</option><option>MSOE</option><option>MATC</option><option>Other / not in school</option></select></div>
+            <div class="field"><label for="birthday">Birthday</label><input id="birthday" name="birthday" type="date" autocomplete="bday"></div>
+          </div>
+          <label class="check" for="black-card-opt"><input id="black-card-opt" name="black_card_interest" type="checkbox" value="yes"><span><strong>I'm interested in the Black Card.</strong><span>Let me know if a founding number is available.</span></span></label>
           <p class="consent">By signing up, you agree to receive recurring event texts and emails from Thrillwaukee. Consent is not a condition of purchase. Message and data rates may apply. Reply STOP to cancel or HELP for help.</p>
-          <button class="submit mechanical" type="submit"><span>JOIN THE TRANSMISSION</span><i>→</i></button>
+          <button class="button" type="submit">Lock me in</button>
           <p class="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
   </main>
 
-  <footer>
-    <a class="footer-brand" href="#opening">THRILLWAUKEE</a>
-    <p>A CULTURAL TRANSMISSION<br>ORIGINATING IN MILWAUKEE AFTER DARK.</p>
-    <div><a href="mailto:hello@thrillwaukee.com">CONTACT</a><a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer">TIKTOK ↗</a></div>
-    <small>© 2026 THRILLWAUKEE LLC · 18+ EVENTS UNLESS POSTED OTHERWISE · BRING A VALID ID</small>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top"><a class="logo footer-logo" href="#top">Thrill<span>waukee</span></a><div class="socials"><a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok ↗</a><a href="mailto:hello@thrillwaukee.com">Contact ↗</a></div></div>
+      <div class="footer-bottom"><span>© 2026 Thrillwaukee LLC · Milwaukee, Wisconsin</span><span>18+ events unless posted otherwise. Bring a valid ID.</span></div>
+    </div>
   </footer>
-  <script src="script.js" defer></script>
+
+  <script>
+    const menuButton = document.querySelector('.menu-button');
+    const nav = document.querySelector('.nav-links');
+    const closeMenu = () => {
+      document.body.classList.remove('menu-open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Open menu');
+    };
+    menuButton.addEventListener('click', () => {
+      const open = document.body.classList.toggle('menu-open');
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
+
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+      }), { threshold: .12 });
+      document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+    } else {
+      document.querySelectorAll('.reveal').forEach(element => element.classList.add('visible'));
+    }
+
+    const form = document.querySelector('.signup');
+    const status = form.querySelector('.form-status');
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const button = form.querySelector('button');
+      const original = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      status.textContent = '';
+      try {
+        const response = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() });
+        if (!response.ok) throw new Error(`Form request failed: ${response.status}`);
+        form.reset();
+        status.textContent = "You're on the list. Watch your texts.";
+      } catch (error) {
+        console.error(error);
+        status.textContent = "That didn't go through. Please try again.";
+      } finally {
+        button.disabled = false;
+        button.textContent = original;
+      }
+    });
+  </script>
 </body>
 </html>
