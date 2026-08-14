@@ -2,6 +2,7 @@
 @import url('entry-gate.css');
 @import url('responsive-refine.css');
 @import url('mobile-manifest.css');
+@import url('mobile-active.css');
 
 /* Content intentionally removed from the current site experience. */
 .archive,
