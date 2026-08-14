@@ -19,11 +19,21 @@
   const moveSection = $('#move');
   const cursorMode = $('.cursor-mode');
 
-  // Remove Archive from the current experience without touching unrelated functionality.
+  // Remove sections/copy explicitly retired from the current experience.
   const archive = $('#archive');
   const archiveLink = $('nav a[href="#archive"]');
+  const manifest = $('.manifest');
+  const listHeader = $('.list > .section-index');
+  const giant414 = $('.huge-414');
+  const blackCardHelper = $('.black-card .credential-wrap > p');
+  const blackCardWitnessCopy = $('.black-card .access-copy > p');
   if (archive) archive.remove();
   if (archiveLink) archiveLink.remove();
+  if (manifest) manifest.remove();
+  if (listHeader) listHeader.remove();
+  if (giant414) giant414.remove();
+  if (blackCardHelper) blackCardHelper.remove();
+  if (blackCardWitnessCopy) blackCardWitnessCopy.remove();
 
   // Navigation behaves like a channel selector on small screens.
   const menu = $('.menu-toggle');
