@@ -13,7 +13,7 @@ const normalizeUsPhone = (value = '') => {
 const asBoolean = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toLowerCase());
 
 async function brevo(path, options = {}) {
-  const apiKey = Netlify.env.get('BREVO_API_KEY');
+  const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) throw new Error('BREVO_API_KEY is not configured');
 
   const response = await fetch(`${BREVO_API}${path}`, {
@@ -39,7 +39,7 @@ async function syncContact(data) {
   const email = String(data.email || '').trim().toLowerCase();
   if (!email) return;
 
-  const primaryListId = Number(Netlify.env.get('BREVO_LIST_ID'));
+  const primaryListId = Number(process.env.BREVO_LIST_ID);
   if (!Number.isFinite(primaryListId)) throw new Error('BREVO_LIST_ID is not configured');
 
   const smsOptIn = asBoolean(data.sms_opt_in);
@@ -47,7 +47,7 @@ async function syncContact(data) {
   const listIds = [primaryListId];
 
   if (asBoolean(data.black_card_interest)) {
-    const blackCardListId = Number(Netlify.env.get('BREVO_BLACK_CARD_LIST_ID'));
+    const blackCardListId = Number(process.env.BREVO_BLACK_CARD_LIST_ID);
     if (Number.isFinite(blackCardListId)) listIds.push(blackCardListId);
   }
 
@@ -67,7 +67,7 @@ async function syncContact(data) {
     }),
   });
 
-  const welcomeTemplateId = Number(Netlify.env.get('BREVO_WELCOME_TEMPLATE_ID'));
+  const welcomeTemplateId = Number(process.env.BREVO_WELCOME_TEMPLATE_ID);
   if (Number.isFinite(welcomeTemplateId)) {
     await brevo('/smtp/email', {
       method: 'POST',
