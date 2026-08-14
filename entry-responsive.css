@@ -1,2 +1,4 @@
-/* Entry refinement */
+/* Thrillwaukee entry + responsive refinement loader. */
+@import url('entry-gate.css');
+@import url('responsive-refine.css');
 .archive,nav a[href="#archive"]{display:none!important}
