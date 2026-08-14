@@ -1,15 +1,22 @@
-/* Activate the mobile-only ambient and transition states using existing DOM/classes. */
+/* Mobile landing remains deliberately composed and still until the user taps the beacon. */
 @media (max-width:768px){
-  .opening:before{animation:mobile-grid-shift 7s steps(2,end) infinite}
-  .opening .scope{animation:mobile-scope-drift 4.2s ease-in-out infinite}
-  .opening .opening-time span{animation:mobile-time-flicker 3.8s steps(2,end) infinite}
+  .opening:before,
+  .opening:after,
+  .opening .scope,
+  .opening .opening-time span,
+  .opening .scanline,
+  .opening .beacon-core,
+  .mobile-signal-bars i{animation:none!important}
+
   .scope[role="button"]:active{transform:translateX(-50%) scale(.96);box-shadow:0 0 0 2px var(--yellow),0 0 3rem rgba(255,212,0,.35)}
+
+  /* Keep the actual tap-to-enter transition; only the idle landing state is static. */
   body.gate-exiting .opening{animation:mobile-channel-close .78s cubic-bezier(.77,0,.18,1) forwards!important}
   body.gate-exiting .gate-static{display:block!important;opacity:0;animation:mobile-static-hit .78s steps(8,end) forwards!important;background:repeating-linear-gradient(0deg,rgba(245,245,241,.96) 0 2px,rgba(9,9,11,.08) 2px 4px),repeating-linear-gradient(90deg,rgba(143,157,255,.98) 0 4px,rgba(255,212,0,.88) 4px 7px,rgba(245,245,241,.88) 7px 9px,transparent 9px 14px)}
   body.gate-exiting .opening h1,body.gate-exiting .opening-statement,body.gate-exiting .opening-code,body.gate-exiting .opening-time,body.gate-exiting .tune-link,body.gate-exiting .scope{animation:mobile-jump .46s steps(3,end) both!important}
 }
+
 @media (max-width:768px) and (prefers-reduced-motion:reduce){
-  .opening:before,.opening .scope,.opening .opening-time span{animation:none!important}
   body.gate-exiting .opening{animation:none!important;opacity:0;transition:opacity .12s linear!important}
   body.gate-exiting .gate-static{display:none!important}
 }
