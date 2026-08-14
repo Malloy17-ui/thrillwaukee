@@ -1,6 +1,7 @@
 /* Thrillwaukee entry + responsive refinement loader. */
 @import url('entry-gate.css');
 @import url('responsive-refine.css');
+@import url('mobile-manifest.css');
 
 /* Content intentionally removed from the current site experience. */
 .archive,
