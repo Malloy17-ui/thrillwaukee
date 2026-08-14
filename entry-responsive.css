@@ -3,6 +3,7 @@
 @import url('responsive-refine.css');
 @import url('mobile-manifest.css');
 @import url('mobile-active.css');
+@import url('chromebook-title-fix.css');
 
 /* Content intentionally removed from the current site experience. */
 .archive,
