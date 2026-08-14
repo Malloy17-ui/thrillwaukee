@@ -1,4 +1,17 @@
 /* Thrillwaukee entry + responsive refinement loader. */
 @import url('entry-gate.css');
 @import url('responsive-refine.css');
-.archive,nav a[href="#archive"]{display:none!important}
+
+/* Content intentionally removed from the current site experience. */
+.archive,
+.manifest,
+nav a[href="#archive"],
+.huge-414,
+.black-card .credential-wrap > p,
+.black-card .access-copy > p,
+.list > .section-index {
+  display:none!important;
+}
+
+/* Close the space created by the removed Black Card helper copy. */
+.black-card .access-copy h2{margin-top:0}
