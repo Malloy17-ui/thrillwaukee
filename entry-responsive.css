@@ -4,6 +4,7 @@
 @import url('mobile-manifest.css');
 @import url('mobile-active.css');
 @import url('chromebook-title-fix.css');
+@import url('signup-wiring.css');
 
 /* Content intentionally removed from the current site experience. */
 .archive,
