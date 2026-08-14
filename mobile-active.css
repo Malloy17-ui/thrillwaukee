@@ -1,22 +1,22 @@
-/* Mobile landing remains deliberately composed and still until the user taps the beacon. */
+/* Mobile skips the landing gate entirely. The site loads directly into the main content. */
 @media (max-width:768px){
-  .opening:before,
-  .opening:after,
-  .opening .scope,
-  .opening .opening-time span,
-  .opening .scanline,
-  .opening .beacon-core,
-  .mobile-signal-bars i{animation:none!important}
+  .opening{display:none!important}
 
-  .scope[role="button"]:active{transform:translateX(-50%) scale(.96);box-shadow:0 0 0 2px var(--yellow),0 0 3rem rgba(255,212,0,.35)}
+  /* script.js may still mark the body as gate-pending; neutralize those desktop-gate states on mobile. */
+  body.gate-pending,
+  body.gate-exiting{overflow-x:hidden!important;overflow-y:auto!important}
 
-  /* Keep the actual tap-to-enter transition; only the idle landing state is static. */
-  body.gate-exiting .opening{animation:mobile-channel-close .78s cubic-bezier(.77,0,.18,1) forwards!important}
-  body.gate-exiting .gate-static{display:block!important;opacity:0;animation:mobile-static-hit .78s steps(8,end) forwards!important;background:repeating-linear-gradient(0deg,rgba(245,245,241,.96) 0 2px,rgba(9,9,11,.08) 2px 4px),repeating-linear-gradient(90deg,rgba(143,157,255,.98) 0 4px,rgba(255,212,0,.88) 4px 7px,rgba(245,245,241,.88) 7px 9px,transparent 9px 14px)}
-  body.gate-exiting .opening h1,body.gate-exiting .opening-statement,body.gate-exiting .opening-code,body.gate-exiting .opening-time,body.gate-exiting .tune-link,body.gate-exiting .scope{animation:mobile-jump .46s steps(3,end) both!important}
-}
+  body.gate-pending .masthead,
+  body.gate-exiting .masthead{
+    opacity:1!important;
+    transform:none!important;
+    pointer-events:auto!important;
+  }
 
-@media (max-width:768px) and (prefers-reduced-motion:reduce){
-  body.gate-exiting .opening{animation:none!important;opacity:0;transition:opacity .12s linear!important}
+  body.gate-pending .warning-strip,
+  body.gate-exiting .warning-strip,
+  body.gate-complete .warning-strip{margin-top:4rem!important}
+
+  /* No landing-page transition/static on mobile because the landing page itself is removed. */
   body.gate-exiting .gate-static{display:none!important}
 }
