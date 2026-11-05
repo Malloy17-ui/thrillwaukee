@@ -4,173 +4,258 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>THRILLWAUKEE — Milwaukee After Dark</title>
-  <meta name="description" content="Thrillwaukee transmits Milwaukee's nights worth showing up for. Buy admission to this month's event or join the list for first access.">
-  <meta name="theme-color" content="#09090b">
-  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Thrillwaukee makes Milwaukee nights worth leaving the house for. Join the list or grab admission to the current event.">
+  <meta name="theme-color" content="#8d7cf6">
+  <meta name="color-scheme" content="light">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://thrillwaukee.com/">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thrillwaukee.com/">
   <meta property="og:site_name" content="THRILLWAUKEE">
   <meta property="og:title" content="THRILLWAUKEE — Milwaukee After Dark">
-  <meta property="og:description" content="A cultural transmission originating in Milwaukee after dark.">
+  <meta property="og:description" content="A small, hand-built internet corner for Milwaukee nights.">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="THRILLWAUKEE — Milwaukee After Dark">
-  <meta name="twitter:description" content="A cultural transmission originating in Milwaukee after dark.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;650&display=swap" rel="stylesheet">
+  <meta name="twitter:description" content="A small, hand-built internet corner for Milwaukee nights.">
   <link rel="stylesheet" href="styles.css">
-  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  <script async
+  src="https://js.stripe.com/v3/buy-button.js">
+</script>
 </head>
 <body>
-  <a class="skip" href="#content">Skip to transmission</a>
-  <canvas id="signal-canvas" aria-hidden="true"></canvas>
-  <div class="cursor" aria-hidden="true"><span class="cursor-mode">SCAN</span><span class="cursor-cross"></span></div>
-  <div class="flash" aria-hidden="true"></div>
-  <div class="transmission" role="status" aria-live="polite"></div>
+  <a class="skip" href="#content">skip to content</a>
 
-  <header class="masthead">
-    <a class="wordmark" href="#opening" aria-label="THRILLWAUKEE home">THRILLWAUKEE</a>
-    <div class="channel" aria-hidden="true"><i></i> CH 04:14 / LIVE</div>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav"><span>MENU</span><i></i></button>
-    <nav id="nav" aria-label="Primary navigation">
-      <a href="#move" data-scramble>THIS MONTH'S MOVE</a>
-      <a href="#archive" data-scramble>ARCHIVE</a>
-      <a href="#black-card" data-scramble>BLACK CARD</a>
-      <a href="#list" data-scramble>GET ON THE LIST</a>
-    </nav>
-  </header>
+  <div class="site-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <a class="brand" href="/" aria-label="Thrillwaukee home">THRILLWAUKEE</a>
+        <span class="version">v.00414</span>
+      </div>
 
-  <main id="content">
-    <section class="opening" id="opening" data-cursor="TUNE" aria-labelledby="opening-title">
-      <div class="opening-code">MKE / 43°02′N 87°54′W<br>TRANSMISSION 00414</div>
-      <div class="opening-time"><span data-clock>02:14:00</span><small>LOCAL / AFTER DARK</small></div>
-      <h1 id="opening-title"><span>THRILL</span><span>WAUKEE</span></h1>
-      <p class="opening-statement">THE CITY IS NOT ASLEEP.<br><b>YOU ARE JUST ON THE WRONG FREQUENCY.</b></p>
-      <a class="tune-link magnetic" href="#move"><span>ENTER THE SIGNAL</span><b>↓</b></a>
-      <div class="scope" aria-hidden="true"><i></i><i></i><i></i><i></i><span>LAKE / CITY / NIGHT</span></div>
-      <div class="scanline" aria-hidden="true"></div>
-    </section>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#event">event</a>
+        <a href="#black-card">black card</a>
+        <a href="#join">join</a>
+      </nav>
+    </header>
 
-    <aside class="warning-strip" aria-label="Milwaukee campus network">
+    <div class="status-line" aria-label="Site status">
+      <span><b class="status-dot"></b> online</span>
+      <span>milwaukee, wisconsin</span>
+      <span id="local-clock">--:--:-- cst</span>
+    </div>
+
+    <main id="content">
+      <section class="intro panel">
+        <div class="window-bar">
+          <span>thrillwaukee.html</span>
+          <span>viewing: /home</span>
+        </div>
+
+        <div class="intro-grid">
+          <div class="intro-copy">
+            <p class="eyebrow">milwaukee after dark // since we got bored</p>
+            <h1>we make the nights<br>you text people about.</h1>
+            <p class="lede">Thrillwaukee is a small event project built for people who actually want to leave the group chat. Good rooms, good people, no fake mystique.</p>
+            <div class="intro-links">
+              <a class="button-link" href="#event">see current event →</a>
+              <a href="#join">or just get on the list</a>
+            </div>
+          </div>
+
+          <aside class="ascii-box" aria-label="Thrillwaukee system note">
+            <pre>+--------------------+
+| THRILLWAUKEE / 414 |
+|--------------------|
+| STATUS : ONLINE    |
+| MODE   : AFTERDARK |
+| COLOR  : PERIWINKL |
+| HYPE   : MANUAL    |
++--------------------+</pre>
+            <p>made with html, caffeine &amp; unreasonable confidence.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="event-section" id="event" aria-labelledby="event-title">
+        <div class="section-label">
+          <span>01 / current event</span>
+          <span>last updated: manually</span>
+        </div>
+
+        <div class="event-layout">
+          <article class="event-card panel">
+            <div class="window-bar">
+              <span>event_001.txt</span>
+              <span>read-only</span>
+            </div>
+
+            <div class="event-title-wrap">
+              <span class="event-badge">CURRENT</span>
+              <h2 id="event-title">TO BE<br>TRANSMITTED</h2>
+            </div>
+
+            <table class="event-table">
+              <tbody>
+                <tr><th>Date</th><td>to be transmitted</td></tr>
+                <tr><th>Start</th><td>after dark</td></tr>
+                <tr><th>Venue</th><td>location withheld</td></tr>
+                <tr><th>Area</th><td>milwaukee, wi</td></tr>
+                <tr><th>Admission</th><td>live via stripe</td></tr>
+                <tr><th>Status</th><td><span class="text-online">● available</span></td></tr>
+              </tbody>
+            </table>
+
+            <p class="micro-copy">This slot changes when the next Thrillwaukee night is locked. Bookmarking this page is extremely 2008 and therefore encouraged.</p>
+          </article>
+
+          <aside class="checkout panel" aria-label="Buy admission">
+            <div class="window-bar">
+              <span>checkout.secure</span>
+              <span>https</span>
+            </div>
+            <h3>get in.</h3>
+            <p>Admission is handled by Stripe. No account with us, no weird checkout flow.</p>
+
+            <div class="stripe-wrap">
+              <stripe-buy-button
+  buy-button-id="buy_btn_1U3Q57E5YY3o38uXWTXLOwaN"
+  publishable-key="pk_live_51SMxJ3E5YY3o38uXgsltvaduOXnBJjsUFCEDRbyvIcGBDtlxkLiIm8p16rFvFBI1B4ZdpELLd3ixYMKT6Fw0nKcg000fuw5MDa"
+>
+</stripe-buy-button>
+            </div>
+
+            <p class="tiny">payment details never touch this site.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="note-strip" aria-label="Thrillwaukee note">
+        <span>///</span>
+        <p>NOT A CLUB. NOT AN APP. JUST A REASON TO GO OUT.</p>
+        <span>///</span>
+      </section>
+
+      <section class="black-card-section" id="black-card" aria-labelledby="black-card-title">
+        <div class="section-label">
+          <span>02 / black card</span>
+          <span>founding issue</span>
+        </div>
+
+        <div class="black-card-layout">
+          <div class="member-card" aria-label="Thrillwaukee Black Card concept">
+            <div class="member-card-top">
+              <span>THRILLWAUKEE</span>
+              <span>FOUNDING MEMBER</span>
+            </div>
+            <div class="member-number">001</div>
+            <div class="member-meta">
+              <span>MKE / WI</span>
+              <span>PERMANENT ISSUE</span>
+            </div>
+          </div>
+
+          <div class="black-card-copy">
+            <h2 id="black-card-title">the black card.</h2>
+            <p>The first 100 people get a permanent number and first access when something new drops.</p>
+            <ul>
+              <li>founding number 001–100</li>
+              <li>presale pricing</li>
+              <li>priority entry</li>
+              <li>first shot at guest spots</li>
+            </ul>
+            <a href="#join">request a number ↓</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="join-section panel" id="join" aria-labelledby="join-title">
+        <div class="window-bar">
+          <span>join_the_list.cgi</span>
+          <span>POST</span>
+        </div>
+
+        <div class="join-grid">
+          <div class="join-copy">
+            <p class="eyebrow">03 / mailing list</p>
+            <h2 id="join-title">get on<br>the list.</h2>
+            <p>Event drops, presales, location reveals, occasional useful information. No feed. No algorithm. No daily newsletter.</p>
+          </div>
+
+          <form name="thrillwaukee-list" method="POST" data-netlify="true" netlify-honeypot="website" action="/success.html">
+            <input type="hidden" name="form-name" value="thrillwaukee-list">
+            <p class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></p>
+
+            <div class="form-row">
+              <label for="first-name">first name <b>*</b></label>
+              <input id="first-name" name="first_name" autocomplete="given-name" required>
+            </div>
+
+            <div class="form-row">
+              <label for="email">email <b>*</b></label>
+              <input id="email" name="email" type="email" autocomplete="email" required>
+            </div>
+
+            <div class="form-row">
+              <label for="phone">phone <b>*</b></label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="414 555 0199">
+            </div>
+
+            <div class="form-pair">
+              <div class="form-row">
+                <label for="campus">campus <span>(optional)</span></label>
+                <select id="campus" name="campus">
+                  <option value="" selected>select...</option>
+                  <option>UWM</option>
+                  <option>Marquette</option>
+                  <option>MSOE</option>
+                  <option>MATC</option>
+                  <option>MIAD</option>
+                  <option>Other / not in school</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label for="birthday">birthday <span>(optional)</span></label>
+                <input id="birthday" name="birthday" type="date" autocomplete="bday">
+              </div>
+            </div>
+
+            <label class="check-row" for="sms-opt-in">
+              <input id="sms-opt-in" name="sms_opt_in" value="yes" type="checkbox">
+              <span><b>SMS SIGNAL</b> — text me event drops, presales, guest spots and location reveals.</span>
+            </label>
+
+            <label class="check-row" for="card-interest">
+              <input id="card-interest" name="black_card_interest" value="yes" type="checkbox">
+              <span><b>BLACK CARD</b> — let me know if a founding number is still available.</span>
+            </label>
+
+            <p class="consent">By joining, you agree to receive Thrillwaukee event emails. If you check SMS SIGNAL, you also consent to recurring automated promotional and informational texts from Thrillwaukee. Message frequency varies. Message and data rates may apply. Reply STOP to cancel or HELP for help. SMS consent is not a condition of purchase. <a href="/privacy.html">privacy</a> · <a href="/terms.html">terms</a>.</p>
+
+            <button class="submit-button" type="submit">[ JOIN THE LIST ]</button>
+            <p class="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
       <div>
-        <span>UWM</span><span>MARQUETTE</span><span>MSOE</span><span>MATC</span><span>MIAD</span>
-        <span aria-hidden="true">UWM</span><span aria-hidden="true">MARQUETTE</span><span aria-hidden="true">MSOE</span><span aria-hidden="true">MATC</span><span aria-hidden="true">MIAD</span>
+        <strong>THRILLWAUKEE</strong>
+        <span>milwaukee, wi / internet</span>
       </div>
-    </aside>
-
-    <!-- MONTHLY EVENT: update these fields for each new event -->
-    <section class="event" id="move" data-cursor="ADMIT" aria-labelledby="event-title">
-      <header class="section-index"><span>THIS MONTH'S MOVE</span><span>CURRENT THRILLWAUKEE EVENT</span></header>
-      <div class="event-stage">
-        <article class="ticket" aria-label="This month's Thrillwaukee event admission manifest">
-          <div class="ticket-edge" aria-hidden="true"></div>
-          <div class="ticket-stamp">ISSUED<br>MKE</div>
-          <p class="ticket-kicker">MONTHLY ADMISSION MANIFEST · 2026</p>
-          <h2 id="event-title">TO BE<br><em>TRANSMITTED</em></h2>
-          <dl class="event-data">
-            <div><dt>Date</dt><dd>To be transmitted</dd></div>
-            <div><dt>Start time</dt><dd>After dark</dd></div>
-            <div><dt>Venue</dt><dd>Location withheld</dd></div>
-            <div><dt>Neighborhood</dt><dd>Milwaukee, WI</dd></div>
-            <div><dt>Price</dt><dd>Live inventory via Stripe</dd></div>
-            <div><dt>Status</dt><dd><i></i> On sale</dd></div>
-          </dl>
-          <p class="event-note">This is the recurring monthly Thrillwaukee event slot. Replace the placeholder date, time, venue, neighborhood, description, pricing language, capacity, and artwork here when each event is finalized.</p>
-          <div class="barcode" aria-hidden="true"></div>
-          <span class="serial">414-MONTHLY-MKE</span>
-        </article>
-
-        <aside class="checkout" aria-label="Buy admission to this month's event">
-          <div class="checkout-head"><span>ATTEND</span><b>SECURE CHECKOUT</b></div>
-          <p>Buy admission to this month's move. No list signup required. Stripe handles payment details in its secure component.</p>
-          <div class="stripe-shell">
-            <stripe-buy-button
-              buy-button-id="buy_btn_1U3Q57E5YY3o38uXWTXLOwaN"
-              publishable-key="pk_live_51SMxJ3E5YY3o38uXgsltvaduOXnBJjsUFCEDRbyvIcGBDtlxkLiIm8p16rFvFBI1B4ZdpELLd3ixYMKT6Fw0nKcg000fuw5MDa">
-            </stripe-buy-button>
-          </div>
-          <small>Encrypted by Stripe · Live purchase control</small>
-        </aside>
+      <div class="footer-links">
+        <a href="mailto:hello@thrillwaukee.com">email</a>
+        <a href="/privacy.html">privacy</a>
+        <a href="/terms.html">terms</a>
+        <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">instagram ↗</a>
+        <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer">tiktok ↗</a>
       </div>
-    </section>
+      <p>© 2026 THRILLWAUKEE LLC · 18+ unless posted otherwise · bring a valid id</p>
+    </footer>
+  </div>
 
-    <section class="interruption" data-cursor="MOVE" aria-label="Thrillwaukee statement">
-      <div class="mass-type" aria-hidden="true">THRILLWAUKEE</div>
-      <p>LOOKING FOR<br>SOMEONE?</p>
-      <h2>THEY'RE AT<br>ONE OF <button type="button" class="secret-trigger">OUR NIGHTS.</button></h2>
-      <div class="coordinates">UWM / MARQUETTE / MSOE / MATC / MIAD / CITYWIDE</div>
-    </section>
-
-    <section class="archive" id="archive" data-cursor="DRAG" aria-labelledby="archive-title">
-      <header class="section-index"><span>FIELD EVIDENCE</span><span>AWAITING ORIGINAL MATERIAL</span></header>
-      <div class="archive-intro">
-        <h2 id="archive-title">NIGHTS<br>LEAVE<br><em>TRACES.</em></h2>
-        <p>A live contact sheet for the people, rooms, bridges, parking decks, and 2AM flashes that make the city ours. Original Thrillwaukee photography will drop directly into these frames.</p>
-      </div>
-      <div class="contact-sheet" aria-label="Photography placeholders for future Thrillwaukee event images">
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME A</span><b>FLASH<br>MEMORY</b></div><figcaption>Arrival / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME B</span><b>ROOM<br>FULL</b></div><figcaption>Floor / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME C</span><b>LAKE<br>STATIC</b></div><figcaption>Exterior / Future image</figcaption></figure>
-        <figure tabindex="0"><div class="photo-placeholder"><span>FRAME D</span><b>LAST<br>CALL</b></div><figcaption>Exit / Future image</figcaption></figure>
-      </div>
-    </section>
-
-    <section class="manifest" aria-labelledby="manifest-title">
-      <p class="manifest-label">THRILLWAUKEE IS / IS NOT</p>
-      <h2 id="manifest-title"><span>NOT RANDOM PROMOTERS</span><span>NOT A DEAD ROOM</span><span>NOT ANOTHER TOURISM AD</span><b>THE MOVE, TEXTED FIRST.</b></h2>
-      <div class="manifest-copy"><p>We throw the nights worth showing up to. Sharp production. The right crowd. No mystery links.</p><p>Event drops, presale codes, guest spots, and location reveals go to the list before they go anywhere else.</p></div>
-    </section>
-
-    <section class="black-card" id="black-card" data-cursor="ACCESS" aria-labelledby="black-card-title">
-      <header class="section-index light"><span>ACCESS OBJECT</span><span>FOUNDING 100 / PERMANENT ISSUE</span></header>
-      <div class="access-grid">
-        <div class="credential-wrap">
-          <div class="credential" tabindex="0" aria-label="THRILLWAUKEE Black Card founding member credential">
-            <div class="card-noise"></div><div class="card-glare"></div>
-            <span class="credential-brand">THRILLWAUKEE</span><span class="credential-class">ACCESS / BLACK</span>
-            <b>001</b><small>FOUNDING MEMBER<br>MILWAUKEE, WI<br>NON-TRANSFERABLE</small>
-            <div class="credential-stripe">THRILLWAUKEE / THRILLWAUKEE / 414</div>
-          </div>
-          <p>MOVE YOUR POINTER ACROSS THE OBJECT / TAP ON MOBILE</p>
-        </div>
-        <div class="access-copy">
-          <p>THE FIRST 100 ARE NOT CUSTOMERS.<br><b>THEY ARE THE FIRST WITNESSES.</b></p>
-          <h2 id="black-card-title">THE<br>BLACK<br>CARD.</h2>
-          <ol><li>Number 001–100, locked forever</li><li>Presale pricing on every event</li><li>Priority entry</li><li>First access to drops and guest spots</li></ol>
-          <a href="#list" class="mechanical magnetic"><span>REQUEST ACCESS</span><i>→</i></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="list" id="list" data-cursor="CONNECT" aria-labelledby="list-title">
-      <header class="section-index"><span>STAY CONNECTED</span><span>TEXTS ONLY WHEN IT MATTERS</span></header>
-      <div class="list-grid">
-        <div><p class="huge-414" data-easter="414">414</p><h2 id="list-title">GET ON<br>THE LIST.</h2><p class="list-lede">Event drops. Presale codes. Location reveals. No feed to fight. No noise to filter.</p></div>
-        <form name="thrillwaukee-list" method="POST" data-netlify="true" netlify-honeypot="website" action="/success.html">
-          <input type="hidden" name="form-name" value="thrillwaukee-list">
-          <p class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></p>
-          <div class="field"><label for="first-name">First name <b>*</b></label><input id="first-name" name="first_name" autocomplete="given-name" required placeholder="TYPE HERE"></div>
-          <div class="field"><label for="phone">Phone <b>*</b></label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="(414) 555-0199"></div>
-          <div class="field"><label for="email">Email <b>*</b></label><input id="email" name="email" type="email" autocomplete="email" required placeholder="YOU@SCHOOL.EDU"></div>
-          <div class="field field-split"><div><label for="campus">Campus</label><select id="campus" name="campus"><option value="" selected>SELECT</option><option>UWM</option><option>Marquette</option><option>MSOE</option><option>MATC</option><option>MIAD</option><option>Other / not in school</option></select></div><div><label for="birthday">Birthday</label><input id="birthday" name="birthday" type="date" autocomplete="bday"></div></div>
-          <label class="access-check" for="sms-opt-in"><input id="sms-opt-in" name="sms_opt_in" value="yes" type="checkbox"><span><b>SMS SIGNAL</b> Text me event drops, presale codes, guest spots, and location reveals.</span></label>
-          <label class="access-check" for="card-interest"><input id="card-interest" name="black_card_interest" value="yes" type="checkbox"><span><b>BLACK CARD SIGNAL</b> Notify me if a founding number remains.</span></label>
-          <p class="consent">By joining, you agree to receive Thrillwaukee event emails. If you check SMS SIGNAL, you also consent to recurring automated promotional and informational texts from Thrillwaukee. Message frequency varies. Message and data rates may apply. Reply STOP to cancel or HELP for help. SMS consent is not a condition of purchase. <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a>.</p>
-          <button class="submit mechanical" type="submit"><span>JOIN THE TRANSMISSION</span><i>→</i></button>
-          <p class="form-status" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <a class="footer-brand" href="#opening">THRILLWAUKEE</a>
-    <p>A CULTURAL TRANSMISSION<br>ORIGINATING IN MILWAUKEE AFTER DARK.</p>
-    <div><a href="mailto:hello@thrillwaukee.com">CONTACT</a><a href="/privacy.html">PRIVACY</a><a href="/terms.html">TERMS</a><a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer">TIKTOK ↗</a></div>
-    <small>© 2026 THRILLWAUKEE LLC · 18+ EVENTS UNLESS POSTED OTHERWISE · BRING A VALID ID</small>
-  </footer>
   <script src="script.js" defer></script>
 </body>
 </html>
