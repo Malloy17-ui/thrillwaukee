@@ -1,31 +1,13 @@
+import { getStore } from '@netlify/blobs';
 import { json, verifySession } from '../lib/admin-session.mjs';
 
-const NETLIFY_API = 'https://api.netlify.com/api/v1';
+const SIGNUP_STORE = 'thrillwaukee-signups';
 const STRIPE_API = 'https://api.stripe.com/v1';
 
 const normalizeEmail = value => String(value || '').trim().toLowerCase();
 const yes = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toLowerCase());
 
 const money = amount => Number.isFinite(amount) ? amount : null;
-
-async function netlifyFetch(path) {
-  const token = process.env.NETLIFY_AUTH_TOKEN;
-  if (!token) throw new Error('NETLIFY_AUTH_TOKEN is not configured');
-
-  const response = await fetch(`${NETLIFY_API}${path}`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-      'user-agent': 'Thrillwaukee Admin Dashboard',
-      accept: 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Netlify API ${response.status}: ${text.slice(0, 180)}`);
-  }
-  return response.json();
-}
 
 async function stripeFetch(path, params = {}) {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -53,33 +35,24 @@ async function stripeFetch(path, params = {}) {
 }
 
 async function getSignups() {
-  const siteId = process.env.SITE_ID;
-  if (!siteId) throw new Error('SITE_ID is unavailable');
+  const store = getStore(SIGNUP_STORE);
+  const { blobs } = await store.list({ prefix: 'people/' });
+  const limited = blobs.slice(0, 1000);
 
-  const forms = await netlifyFetch(`/sites/${encodeURIComponent(siteId)}/forms`);
-  const form = forms.find(item => item.name === 'thrillwaukee-list');
-  if (!form) return { rows: [], truncated: false };
+  const rows = (await Promise.all(
+    limited.map(blob => store.get(blob.key, { type: 'json', consistency: 'strong' }))
+  )).filter(Boolean);
 
-  const rows = [];
-  let page = 1;
-  const perPage = 100;
-
-  while (page <= 10) {
-    const batch = await netlifyFetch(
-      `/forms/${encodeURIComponent(form.id)}/submissions?per_page=${perPage}&page=${page}`
-    );
-    rows.push(...batch);
-    if (batch.length < perPage) break;
-    page += 1;
-  }
-
-  return { rows, truncated: rows.length >= 1000 };
+  return { rows, truncated: blobs.length > limited.length };
 }
 
 async function getPayments() {
   const rows = [];
   let startingAfter = '';
-  const paymentLink = process.env.STRIPE_PAYMENT_LINK_ID || '';
+  const configuredPaymentLink = String(process.env.STRIPE_PAYMENT_LINK_ID || '').trim();
+  const paymentLink = /^plink_[A-Za-z0-9]+$/.test(configuredPaymentLink)
+    ? configuredPaymentLink
+    : '';
 
   for (let page = 0; page < 10; page += 1) {
     const result = await stripeFetch('/checkout/sessions', {
@@ -98,6 +71,7 @@ async function getPayments() {
     rows: rows.filter(item => item.payment_status === 'paid' || item.payment_status === 'no_payment_required'),
     truncated: rows.length >= 1000,
     filteredToPaymentLink: Boolean(paymentLink),
+    invalidPaymentLinkConfigured: Boolean(configuredPaymentLink && !paymentLink),
   };
 }
 
@@ -197,12 +171,17 @@ export default async request => {
 
   const warnings = [];
   let signupResult = { rows: [], truncated: false };
-  let paymentResult = { rows: [], truncated: false, filteredToPaymentLink: false };
+  let paymentResult = {
+    rows: [],
+    truncated: false,
+    filteredToPaymentLink: false,
+    invalidPaymentLinkConfigured: false,
+  };
 
   try {
     signupResult = await getSignups();
   } catch (error) {
-    console.error('Admin Netlify data load failed', error);
+    console.error('Admin signup Blob load failed', error);
     warnings.push(error.message);
   }
 
@@ -213,10 +192,12 @@ export default async request => {
     warnings.push(error.message);
   }
 
-  if (!paymentResult.filteredToPaymentLink && process.env.STRIPE_SECRET_KEY) {
-    warnings.push('Stripe results currently include all completed Checkout payments on this Stripe account. Set STRIPE_PAYMENT_LINK_ID to isolate the Thrillwaukee payment link.');
+  if (paymentResult.invalidPaymentLinkConfigured) {
+    warnings.push('STRIPE_PAYMENT_LINK_ID is not a valid Stripe Payment Link ID. It must be the actual plink_... value. Showing all completed Checkout payments instead.');
+  } else if (!paymentResult.filteredToPaymentLink && process.env.STRIPE_SECRET_KEY) {
+    warnings.push('Stripe results currently include all completed Checkout payments on this Stripe account. Set STRIPE_PAYMENT_LINK_ID to the actual plink_... value to isolate the Thrillwaukee payment link.');
   }
-  if (signupResult.truncated) warnings.push('Signup results reached the 1,000-record safety limit.');
+  if (signupResult.truncated) warnings.push('Stored signup results reached the 1,000-record safety limit.');
   if (paymentResult.truncated) warnings.push('Stripe results reached the 1,000-record safety limit.');
 
   const people = mergeRecords(signupResult.rows, paymentResult.rows);
