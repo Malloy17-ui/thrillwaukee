@@ -13,20 +13,32 @@ const safeEqual = (left = '', right = '') => {
   return timingSafeEqual(a, b);
 };
 
+const readEnv = name => {
+  const fromProcess = process.env?.[name];
+  if (typeof fromProcess === 'string' && fromProcess.length) return fromProcess;
+
+  const fromNetlify = globalThis.Netlify?.env?.get?.(name);
+  if (typeof fromNetlify === 'string' && fromNetlify.length) return fromNetlify;
+
+  return '';
+};
+
+const adminPassword = () => readEnv('ADMIN_PASSWORD');
+
 const sessionKey = () => {
-  const password = process.env.ADMIN_PASSWORD || '';
+  const password = adminPassword();
   return createHash('sha256').update(`thrillwaukee-admin-session:${password}`).digest();
 };
 
 const sign = payload =>
   createHmac('sha256', sessionKey()).update(payload).digest('base64url');
 
-export const credentialsConfigured = () => Boolean(process.env.ADMIN_PASSWORD);
+export const credentialsConfigured = () => Boolean(adminPassword());
 
 export const credentialsMatch = (email, password) =>
   credentialsConfigured() &&
   safeEqual(String(email || '').trim().toLowerCase(), ADMIN_EMAIL) &&
-  safeEqual(String(password || ''), process.env.ADMIN_PASSWORD || '');
+  safeEqual(String(password || ''), adminPassword());
 
 export const createSessionToken = () => {
   const payload = encode(JSON.stringify({
