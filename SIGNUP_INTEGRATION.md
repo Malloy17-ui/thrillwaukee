@@ -11,7 +11,6 @@ Set these under **Project configuration → Environment variables** and make the
 
 Optional:
 
-- `BREVO_BLACK_CARD_LIST_ID` — numeric Brevo list ID for people who check Black Card interest.
 - `BREVO_WELCOME_TEMPLATE_ID` — numeric Brevo transactional email template ID. If present, a welcome email is sent after contact sync.
 
 Redeploy after changing environment variables.
@@ -21,7 +20,6 @@ Redeploy after changing environment variables.
 - Email: always, because the email field is required.
 - First name: synced to Brevo `FIRSTNAME`.
 - Phone: synced to Brevo `SMS` only when the visitor explicitly checks **SMS SIGNAL**.
-- Black Card interest: if configured, adds the contact to the separate Black Card list.
 - Campus, birthday, and the complete submission remain available in Netlify Forms even if they are not mirrored into Brevo.
 
 ## SMS compliance / activation
