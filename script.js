@@ -3,6 +3,45 @@
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
 
+  const dissolve = $('#load-dissolve');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (dissolve && !reducedMotion) {
+    const mobile = window.innerWidth <= 760;
+    const cols = mobile ? 7 : 12;
+    const rows = mobile ? 12 : 8;
+    const frag = document.createDocumentFragment();
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const tile = document.createElement('span');
+        const index = row * cols + col;
+        const offset = ((row * 17) + (col * 29)) % 330;
+        const driftX = ((col % 3) - 1) * (mobile ? 7 : 11);
+        const driftY = ((row % 3) - 1) * (mobile ? 6 : 9);
+
+        tile.className = 'dissolve-tile';
+        if (index % 11 === 0) tile.classList.add('is-ink');
+        else if (index % 4 === 0) tile.classList.add('is-peri');
+
+        tile.style.setProperty('--tile-w', (100 / cols) + 'vw');
+        tile.style.setProperty('--tile-h', (100 / rows) + 'vh');
+        tile.style.setProperty('--tile-x', (col * 100 / cols) + 'vw');
+        tile.style.setProperty('--tile-y', (row * 100 / rows) + 'vh');
+        tile.style.setProperty('--delay', offset + 'ms');
+        tile.style.setProperty('--drift-x', driftX + 'px');
+        tile.style.setProperty('--drift-y', driftY + 'px');
+
+        frag.appendChild(tile);
+      }
+    }
+
+    dissolve.appendChild(frag);
+    window.setTimeout(() => dissolve.remove(), 1250);
+  } else if (dissolve) {
+    dissolve.remove();
+  }
+
   const clock = $('#local-clock');
   const updateClock = () => {
     if (!clock) return;
