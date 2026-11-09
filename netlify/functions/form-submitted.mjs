@@ -1,4 +1,7 @@
+import { getStore } from '@netlify/blobs';
+
 const BREVO_API = 'https://api.brevo.com/v3';
+const SIGNUP_STORE = 'thrillwaukee-signups';
 
 const normalizeUsPhone = (value = '') => {
   const trimmed = String(value).trim();
@@ -33,6 +36,31 @@ async function brevo(path, options = {}) {
 
   if (response.status === 204) return null;
   return response.json().catch(() => null);
+}
+
+async function persistSignup(data) {
+  const email = String(data.email || '').trim().toLowerCase();
+  if (!email) return;
+
+  const store = getStore(SIGNUP_STORE);
+  const key = `people/${encodeURIComponent(email)}`;
+  const existing = await store.get(key, { type: 'json', consistency: 'strong' }).catch(() => null);
+  const now = new Date().toISOString();
+
+  await store.setJSON(key, {
+    id: key,
+    email,
+    data: {
+      first_name: String(data.first_name || '').trim(),
+      email,
+      phone: String(data.phone || '').trim(),
+      campus: String(data.campus || '').trim(),
+      birthday: String(data.birthday || '').trim(),
+      sms_opt_in: asBoolean(data.sms_opt_in) ? 'yes' : '',
+    },
+    created_at: existing?.created_at || now,
+    updated_at: now,
+  });
 }
 
 async function syncContact(data) {
@@ -83,15 +111,24 @@ export default {
     const data = event?.data || {};
     if (String(data['form-name'] || '') !== 'thrillwaukee-list') return;
 
-    try {
-      await syncContact(data);
-      console.log('Thrillwaukee signup synced to Brevo', {
-        email: data.email,
-        smsOptIn: asBoolean(data.sms_opt_in),
-      });
-    } catch (error) {
-      // Netlify already stores the verified form submission. A provider outage should not erase the lead.
-      console.error('Thrillwaukee signup sync failed', error);
+    const results = await Promise.allSettled([
+      persistSignup(data),
+      syncContact(data),
+    ]);
+
+    if (results[0].status === 'rejected') {
+      console.error('Thrillwaukee signup Blob persistence failed', results[0].reason);
     }
+
+    if (results[1].status === 'rejected') {
+      console.error('Thrillwaukee signup Brevo sync failed', results[1].reason);
+    }
+
+    console.log('Thrillwaukee signup processed', {
+      email: data.email,
+      smsOptIn: asBoolean(data.sms_opt_in),
+      blobStored: results[0].status === 'fulfilled',
+      brevoSynced: results[1].status === 'fulfilled',
+    });
   },
 };
