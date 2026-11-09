@@ -1,13 +1,30 @@
-import { getStore } from '@netlify/blobs';
 import { json, verifySession } from '../lib/admin-session.mjs';
 
-const SIGNUP_STORE = 'thrillwaukee-signups';
+const BREVO_API = 'https://api.brevo.com/v3';
 const STRIPE_API = 'https://api.stripe.com/v1';
 
 const normalizeEmail = value => String(value || '').trim().toLowerCase();
 const yes = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toLowerCase());
-
 const money = amount => Number.isFinite(amount) ? amount : null;
+
+async function brevoFetch(path) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) throw new Error('BREVO_API_KEY is not configured');
+
+  const response = await fetch(`${BREVO_API}${path}`, {
+    headers: {
+      accept: 'application/json',
+      'api-key': key,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Brevo API ${response.status}: ${text.slice(0, 180)}`);
+  }
+
+  return response.json();
+}
 
 async function stripeFetch(path, params = {}) {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -35,15 +52,27 @@ async function stripeFetch(path, params = {}) {
 }
 
 async function getSignups() {
-  const store = getStore(SIGNUP_STORE);
-  const { blobs } = await store.list({ prefix: 'people/' });
-  const limited = blobs.slice(0, 1000);
+  const listId = Number(process.env.BREVO_LIST_ID);
+  if (!Number.isFinite(listId)) throw new Error('BREVO_LIST_ID is not configured');
 
-  const rows = (await Promise.all(
-    limited.map(blob => store.get(blob.key, { type: 'json', consistency: 'strong' }))
-  )).filter(Boolean);
+  const rows = [];
+  let offset = 0;
+  let total = 0;
 
-  return { rows, truncated: blobs.length > limited.length };
+  for (let page = 0; page < 2; page += 1) {
+    const result = await brevoFetch(
+      `/contacts/lists/${listId}/contacts?limit=500&offset=${offset}&sort=desc`
+    );
+
+    const contacts = Array.isArray(result.contacts) ? result.contacts : [];
+    total = Number(result.count) || contacts.length;
+    rows.push(...contacts);
+
+    if (rows.length >= total || contacts.length < 500) break;
+    offset += 500;
+  }
+
+  return { rows, truncated: total > rows.length };
 }
 
 async function getPayments() {
@@ -75,20 +104,24 @@ async function getPayments() {
   };
 }
 
-function signupRecord(submission) {
-  const data = submission.data || {};
-  const email = normalizeEmail(data.email || submission.email);
+function signupRecord(contact) {
+  const attributes = contact.attributes || {};
+  const email = normalizeEmail(contact.email);
+  const firstName = String(attributes.FIRSTNAME || '').trim();
+  const lastName = String(attributes.LASTNAME || '').trim();
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
+
   return {
-    key: email || `signup:${submission.id}`,
-    signupId: submission.id,
-    firstName: String(data.first_name || submission.first_name || '').trim(),
-    fullName: String(data.name || submission.name || '').trim(),
+    key: email || `signup:${contact.id}`,
+    signupId: contact.id,
+    firstName,
+    fullName,
     email,
-    phone: String(data.phone || '').trim(),
-    campus: String(data.campus || '').trim(),
-    birthday: String(data.birthday || '').trim(),
-    smsOptIn: yes(data.sms_opt_in),
-    signedUpAt: submission.created_at || null,
+    phone: String(attributes.THRILL_PHONE || attributes.SMS || '').trim(),
+    campus: String(attributes.THRILL_CAMPUS || '').trim(),
+    birthday: String(attributes.THRILL_BIRTHDAY || '').trim(),
+    smsOptIn: yes(attributes.THRILL_SMS_OPT_IN) || Boolean(attributes.SMS),
+    signedUpAt: contact.createdAt || null,
     paid: false,
     paymentCount: 0,
     amountPaid: 0,
@@ -181,7 +214,7 @@ export default async request => {
   try {
     signupResult = await getSignups();
   } catch (error) {
-    console.error('Admin signup Blob load failed', error);
+    console.error('Admin Brevo signup load failed', error);
     warnings.push(error.message);
   }
 
@@ -197,7 +230,8 @@ export default async request => {
   } else if (!paymentResult.filteredToPaymentLink && process.env.STRIPE_SECRET_KEY) {
     warnings.push('Stripe results currently include all completed Checkout payments on this Stripe account. Set STRIPE_PAYMENT_LINK_ID to the actual plink_... value to isolate the Thrillwaukee payment link.');
   }
-  if (signupResult.truncated) warnings.push('Stored signup results reached the 1,000-record safety limit.');
+
+  if (signupResult.truncated) warnings.push('Brevo signup results reached the 1,000-record safety limit.');
   if (paymentResult.truncated) warnings.push('Stripe results reached the 1,000-record safety limit.');
 
   const people = mergeRecords(signupResult.rows, paymentResult.rows);
