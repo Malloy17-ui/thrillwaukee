@@ -1,29 +1,28 @@
 import { json, verifySession } from '../lib/admin-session.mjs';
 
-const NETLIFY_API = 'https://api.netlify.com/api/v1';
+const BREVO_API = 'https://api.brevo.com/v3';
 const STRIPE_API = 'https://api.stripe.com/v1';
 
 const normalizeEmail = value => String(value || '').trim().toLowerCase();
 const yes = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toLowerCase());
-
 const money = amount => Number.isFinite(amount) ? amount : null;
 
-async function netlifyFetch(path) {
-  const token = process.env.NETLIFY_AUTH_TOKEN;
-  if (!token) throw new Error('NETLIFY_AUTH_TOKEN is not configured');
+async function brevoFetch(path) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) throw new Error('BREVO_API_KEY is not configured');
 
-  const response = await fetch(`${NETLIFY_API}${path}`, {
+  const response = await fetch(`${BREVO_API}${path}`, {
     headers: {
-      authorization: `Bearer ${token}`,
-      'user-agent': 'Thrillwaukee Admin Dashboard',
       accept: 'application/json',
+      'api-key': key,
     },
   });
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`Netlify API ${response.status}: ${text.slice(0, 180)}`);
+    throw new Error(`Brevo API ${response.status}: ${text.slice(0, 180)}`);
   }
+
   return response.json();
 }
 
@@ -53,33 +52,36 @@ async function stripeFetch(path, params = {}) {
 }
 
 async function getSignups() {
-  const siteId = process.env.SITE_ID;
-  if (!siteId) throw new Error('SITE_ID is unavailable');
-
-  const forms = await netlifyFetch(`/sites/${encodeURIComponent(siteId)}/forms`);
-  const form = forms.find(item => item.name === 'thrillwaukee-list');
-  if (!form) return { rows: [], truncated: false };
+  const listId = Number(process.env.BREVO_LIST_ID);
+  if (!Number.isFinite(listId)) throw new Error('BREVO_LIST_ID is not configured');
 
   const rows = [];
-  let page = 1;
-  const perPage = 100;
+  let offset = 0;
+  let total = 0;
 
-  while (page <= 10) {
-    const batch = await netlifyFetch(
-      `/forms/${encodeURIComponent(form.id)}/submissions?per_page=${perPage}&page=${page}`
+  for (let page = 0; page < 2; page += 1) {
+    const result = await brevoFetch(
+      `/contacts/lists/${listId}/contacts?limit=500&offset=${offset}&sort=desc`
     );
-    rows.push(...batch);
-    if (batch.length < perPage) break;
-    page += 1;
+
+    const contacts = Array.isArray(result.contacts) ? result.contacts : [];
+    total = Number(result.count) || contacts.length;
+    rows.push(...contacts);
+
+    if (rows.length >= total || contacts.length < 500) break;
+    offset += 500;
   }
 
-  return { rows, truncated: rows.length >= 1000 };
+  return { rows, truncated: total > rows.length };
 }
 
 async function getPayments() {
   const rows = [];
   let startingAfter = '';
-  const paymentLink = process.env.STRIPE_PAYMENT_LINK_ID || '';
+  const configuredPaymentLink = String(process.env.STRIPE_PAYMENT_LINK_ID || '').trim();
+  const paymentLink = /^plink_[A-Za-z0-9]+$/.test(configuredPaymentLink)
+    ? configuredPaymentLink
+    : '';
 
   for (let page = 0; page < 10; page += 1) {
     const result = await stripeFetch('/checkout/sessions', {
@@ -98,23 +100,28 @@ async function getPayments() {
     rows: rows.filter(item => item.payment_status === 'paid' || item.payment_status === 'no_payment_required'),
     truncated: rows.length >= 1000,
     filteredToPaymentLink: Boolean(paymentLink),
+    invalidPaymentLinkConfigured: Boolean(configuredPaymentLink && !paymentLink),
   };
 }
 
-function signupRecord(submission) {
-  const data = submission.data || {};
-  const email = normalizeEmail(data.email || submission.email);
+function signupRecord(contact) {
+  const attributes = contact.attributes || {};
+  const email = normalizeEmail(contact.email);
+  const firstName = String(attributes.FIRSTNAME || '').trim();
+  const lastName = String(attributes.LASTNAME || '').trim();
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
+
   return {
-    key: email || `signup:${submission.id}`,
-    signupId: submission.id,
-    firstName: String(data.first_name || submission.first_name || '').trim(),
-    fullName: String(data.name || submission.name || '').trim(),
+    key: email || `signup:${contact.id}`,
+    signupId: contact.id,
+    firstName,
+    fullName,
     email,
-    phone: String(data.phone || '').trim(),
-    campus: String(data.campus || '').trim(),
-    birthday: String(data.birthday || '').trim(),
-    smsOptIn: yes(data.sms_opt_in),
-    signedUpAt: submission.created_at || null,
+    phone: String(attributes.THRILL_PHONE || attributes.SMS || '').trim(),
+    campus: String(attributes.THRILL_CAMPUS || '').trim(),
+    birthday: String(attributes.THRILL_BIRTHDAY || '').trim(),
+    smsOptIn: yes(attributes.THRILL_SMS_OPT_IN) || Boolean(attributes.SMS),
+    signedUpAt: contact.createdAt || null,
     paid: false,
     paymentCount: 0,
     amountPaid: 0,
@@ -197,12 +204,17 @@ export default async request => {
 
   const warnings = [];
   let signupResult = { rows: [], truncated: false };
-  let paymentResult = { rows: [], truncated: false, filteredToPaymentLink: false };
+  let paymentResult = {
+    rows: [],
+    truncated: false,
+    filteredToPaymentLink: false,
+    invalidPaymentLinkConfigured: false,
+  };
 
   try {
     signupResult = await getSignups();
   } catch (error) {
-    console.error('Admin Netlify data load failed', error);
+    console.error('Admin Brevo signup load failed', error);
     warnings.push(error.message);
   }
 
@@ -213,10 +225,13 @@ export default async request => {
     warnings.push(error.message);
   }
 
-  if (!paymentResult.filteredToPaymentLink && process.env.STRIPE_SECRET_KEY) {
-    warnings.push('Stripe results currently include all completed Checkout payments on this Stripe account. Set STRIPE_PAYMENT_LINK_ID to isolate the Thrillwaukee payment link.');
+  if (paymentResult.invalidPaymentLinkConfigured) {
+    warnings.push('STRIPE_PAYMENT_LINK_ID is not a valid Stripe Payment Link ID. It must be the actual plink_... value. Showing all completed Checkout payments instead.');
+  } else if (!paymentResult.filteredToPaymentLink && process.env.STRIPE_SECRET_KEY) {
+    warnings.push('Stripe results currently include all completed Checkout payments on this Stripe account. Set STRIPE_PAYMENT_LINK_ID to the actual plink_... value to isolate the Thrillwaukee payment link.');
   }
-  if (signupResult.truncated) warnings.push('Signup results reached the 1,000-record safety limit.');
+
+  if (signupResult.truncated) warnings.push('Brevo signup results reached the 1,000-record safety limit.');
   if (paymentResult.truncated) warnings.push('Stripe results reached the 1,000-record safety limit.');
 
   const people = mergeRecords(signupResult.rows, paymentResult.rows);

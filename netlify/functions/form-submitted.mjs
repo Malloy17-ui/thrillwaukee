@@ -35,6 +35,45 @@ async function brevo(path, options = {}) {
   return response.json().catch(() => null);
 }
 
+let ensureAttributesPromise;
+async function ensureThrillwaukeeAttributes() {
+  if (!ensureAttributesPromise) {
+    ensureAttributesPromise = (async () => {
+      const required = [
+        ['THRILL_PHONE', 'text'],
+        ['THRILL_CAMPUS', 'text'],
+        ['THRILL_BIRTHDAY', 'text'],
+        ['THRILL_SMS_OPT_IN', 'text'],
+      ];
+
+      const current = await brevo('/contacts/attributes');
+      const existing = new Set(
+        (current?.attributes || [])
+          .filter(attribute => attribute.category === 'normal')
+          .map(attribute => attribute.name)
+      );
+
+      for (const [name, type] of required) {
+        if (existing.has(name)) continue;
+        try {
+          await brevo(`/contacts/attributes/normal/${name}`, {
+            method: 'POST',
+            body: JSON.stringify({ type }),
+          });
+        } catch (error) {
+          // A parallel warm function may have created it after the list call.
+          if (!String(error?.message || '').includes('400')) throw error;
+        }
+      }
+    })().catch(error => {
+      ensureAttributesPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureAttributesPromise;
+}
+
 async function syncContact(data) {
   const email = String(data.email || '').trim().toLowerCase();
   if (!email) return;
@@ -42,15 +81,22 @@ async function syncContact(data) {
   const primaryListId = Number(process.env.BREVO_LIST_ID);
   if (!Number.isFinite(primaryListId)) throw new Error('BREVO_LIST_ID is not configured');
 
+  await ensureThrillwaukeeAttributes();
+
   const smsOptIn = asBoolean(data.sms_opt_in);
-  const phone = smsOptIn ? normalizeUsPhone(data.phone) : '';
+  const rawPhone = String(data.phone || '').trim();
+  const smsPhone = smsOptIn ? normalizeUsPhone(rawPhone) : '';
   const listIds = [primaryListId];
 
   const attributes = {
     FIRSTNAME: String(data.first_name || '').trim(),
+    THRILL_PHONE: rawPhone,
+    THRILL_CAMPUS: String(data.campus || '').trim(),
+    THRILL_BIRTHDAY: String(data.birthday || '').trim(),
+    THRILL_SMS_OPT_IN: smsOptIn ? 'yes' : 'no',
   };
 
-  if (phone) attributes.SMS = phone;
+  if (smsPhone) attributes.SMS = smsPhone;
 
   await brevo('/contacts', {
     method: 'POST',
@@ -90,8 +136,8 @@ export default {
         smsOptIn: asBoolean(data.sms_opt_in),
       });
     } catch (error) {
-      // Netlify already stores the verified form submission. A provider outage should not erase the lead.
-      console.error('Thrillwaukee signup sync failed', error);
+      // Netlify Forms remains the durable original submission if Brevo is unavailable.
+      console.error('Thrillwaukee signup Brevo sync failed', error);
     }
   },
 };
