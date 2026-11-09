@@ -7,9 +7,11 @@ The private dashboard is available at `/admin.html`. The page itself contains no
 Add these under **Project configuration → Environment variables** and make them available to **Functions**:
 
 - `ADMIN_PASSWORD` — the founder-console password. Do not commit it to GitHub.
-- `STRIPE_SECRET_KEY` — the Stripe live-mode secret key. It stays server-side and is used only to list completed Checkout Sessions.
+- `BREVO_API_KEY` — already used by the signup integration. The admin dashboard uses it server-side to read the Thrillwaukee Brevo list.
+- `BREVO_LIST_ID` — numeric Brevo list ID for the Thrillwaukee signup list.
+- `STRIPE_SECRET_KEY` — the Stripe live-mode secret key used server-side to list completed Checkout Sessions.
 
-You do **not** need a Netlify Personal Access Token. Verified signup events are copied into a private site-wide Netlify Blobs store, and Netlify automatically supplies the credentials Functions need to access that store.
+You do **not** need a Netlify Personal Access Token.
 
 Optional:
 
@@ -21,15 +23,22 @@ Redeploy after adding or changing environment variables.
 
 The allowed login email is hard-coded server-side as the founder email. The password is read only from `ADMIN_PASSWORD`. A successful login creates a signed, HttpOnly, Secure, SameSite=Strict cookie lasting 12 hours. Dashboard API responses use `Cache-Control: no-store`.
 
-## Signup storage
+## Signup source
 
-New verified `thrillwaukee-list` submissions are copied into the private `thrillwaukee-signups` Netlify Blobs store by `form-submitted.mjs`. Netlify Blobs encrypts stored data at rest and in transit.
+The admin ledger reads contacts directly from the Brevo list identified by `BREVO_LIST_ID`.
 
-Because this replaces the old Forms API/PAT approach, submissions that happened **before this Blob integration was deployed** remain in Netlify Forms but will not automatically appear in the new admin ledger. New submissions will.
+The signup event function automatically maintains four Thrillwaukee-specific Brevo contact attributes for new submissions:
+
+- `THRILL_PHONE`
+- `THRILL_CAMPUS`
+- `THRILL_BIRTHDAY`
+- `THRILL_SMS_OPT_IN`
+
+Existing Brevo contacts remain visible immediately. Older contacts created before these attributes existed may have blanks for campus, birthday, or the raw phone number until they submit again.
 
 ## Data shown
 
-The dashboard merges stored signup records and paid Stripe Checkout Sessions by normalized email address.
+The dashboard merges Brevo signup contacts and paid Stripe Checkout Sessions by normalized email address.
 
 It displays:
 
@@ -48,4 +57,4 @@ If someone pays with a different email than they used on the signup form, they a
 
 ## Limits
 
-The dashboard reads up to 1,000 stored signup records and 1,000 recent completed Checkout Sessions per load. It will show a warning if a safety limit is reached.
+The dashboard reads up to 1,000 Brevo contacts and 1,000 recent completed Checkout Sessions per load. It shows a warning if a safety limit is reached.
