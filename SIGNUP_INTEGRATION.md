@@ -1,11 +1,8 @@
 # Thrillwaukee signup integration
 
-The public signup form remains a Netlify Form. After Netlify verifies a `thrillwaukee-list` submission, `netlify/functions/form-submitted.mjs` performs two independent server-side actions:
+The public signup form remains a Netlify Form. After Netlify verifies a `thrillwaukee-list` submission, `netlify/functions/form-submitted.mjs` syncs the contact into Brevo.
 
-1. stores the full signup record in the private `thrillwaukee-signups` Netlify Blobs store for the founder admin dashboard
-2. syncs the marketing contact into Brevo
-
-No Netlify Personal Access Token is required for Blob access from Netlify Functions.
+The same Brevo list is the signup source for the private founder admin dashboard, so no Netlify Personal Access Token is required.
 
 ## Required Netlify environment variables
 
@@ -20,20 +17,16 @@ Optional:
 
 Redeploy after changing environment variables.
 
-## What gets stored
+## What gets synced
 
-The private Blob record keeps:
+The function automatically ensures these custom Brevo contact attributes exist for new signups:
 
-- first name
-- email
-- phone
-- campus
-- birthday
-- SMS opt-in
-- first signup timestamp
-- last update timestamp
+- `THRILL_PHONE` — raw phone entered on the website
+- `THRILL_CAMPUS` — optional campus selection
+- `THRILL_BIRTHDAY` — optional birthday
+- `THRILL_SMS_OPT_IN` — yes/no
 
-Brevo receives the email and first name, plus the phone in its SMS field only when the visitor explicitly checks **SMS SIGNAL**.
+Brevo also receives the standard `FIRSTNAME` attribute, and the standard `SMS` field is populated only when the visitor explicitly checks **SMS SIGNAL**.
 
 ## SMS compliance / activation
 
@@ -41,4 +34,4 @@ The form separates SMS consent from ordinary list signup and links to public Pri
 
 ## Failure behavior
 
-Netlify Forms still keeps the verified original submission. Blob storage and Brevo sync run independently; failure of one does not intentionally erase the other.
+Netlify Forms remains the durable original submission. If Brevo is unavailable or misconfigured, the function logs the sync failure instead of deleting the Netlify lead.
