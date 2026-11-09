@@ -2,4 +2,4 @@
   # These values are server-side runtime secrets used only by Netlify Functions.
   # Their plaintext values are not committed to the repository or published site.
   # Keep secret scanning enabled globally; omit only these known runtime-only keys.
-  SECRETS_SCAN_OMIT_KEYS = "ADMIN_PASSWORD,NETLIFY_AUTH_TOKEN,STRIPE_SECRET_KEY,BREVO_API_KEY"
+  SECRETS_SCAN_OMIT_KEYS = "ADMIN_PASSWORD,NETLIFY_AUTH_TOKEN,STRIPE_SECRET_KEY,BREVO_API_KEY,STRIPE_PAYMENT_LINK_ID"
