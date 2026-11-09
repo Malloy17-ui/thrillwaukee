@@ -46,11 +46,6 @@ async function syncContact(data) {
   const phone = smsOptIn ? normalizeUsPhone(data.phone) : '';
   const listIds = [primaryListId];
 
-  if (asBoolean(data.black_card_interest)) {
-    const blackCardListId = Number(process.env.BREVO_BLACK_CARD_LIST_ID);
-    if (Number.isFinite(blackCardListId)) listIds.push(blackCardListId);
-  }
-
   const attributes = {
     FIRSTNAME: String(data.first_name || '').trim(),
   };
@@ -93,7 +88,6 @@ export default {
       console.log('Thrillwaukee signup synced to Brevo', {
         email: data.email,
         smsOptIn: asBoolean(data.sms_opt_in),
-        blackCardInterest: asBoolean(data.black_card_interest),
       });
     } catch (error) {
       // Netlify already stores the verified form submission. A provider outage should not erase the lead.
