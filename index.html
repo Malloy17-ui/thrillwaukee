@@ -23,6 +23,7 @@
 </script>
 </head>
 <body>
+  <div class="load-dissolve" id="load-dissolve" aria-hidden="true"></div>
   <a class="skip" href="#content">skip to content</a>
 
   <div class="site-shell">
@@ -34,7 +35,6 @@
 
       <nav class="nav" aria-label="Primary navigation">
         <a href="#event">event</a>
-        <a href="#black-card">black card</a>
         <a href="#join">join</a>
       </nav>
     </header>
@@ -136,39 +136,6 @@
         <span>///</span>
       </section>
 
-      <section class="black-card-section" id="black-card" aria-labelledby="black-card-title">
-        <div class="section-label">
-          <span>02 / black card</span>
-          <span>founding issue</span>
-        </div>
-
-        <div class="black-card-layout">
-          <div class="member-card" aria-label="Thrillwaukee Black Card concept">
-            <div class="member-card-top">
-              <span>THRILLWAUKEE</span>
-              <span>FOUNDING MEMBER</span>
-            </div>
-            <div class="member-number">001</div>
-            <div class="member-meta">
-              <span>MKE / WI</span>
-              <span>PERMANENT ISSUE</span>
-            </div>
-          </div>
-
-          <div class="black-card-copy">
-            <h2 id="black-card-title">the black card.</h2>
-            <p>The first 100 people get a permanent number and first access when something new drops.</p>
-            <ul>
-              <li>founding number 001–100</li>
-              <li>presale pricing</li>
-              <li>priority entry</li>
-              <li>first shot at guest spots</li>
-            </ul>
-            <a href="#join">request a number ↓</a>
-          </div>
-        </div>
-      </section>
-
       <section class="join-section panel" id="join" aria-labelledby="join-title">
         <div class="window-bar">
           <span>join_the_list.cgi</span>
@@ -177,7 +144,7 @@
 
         <div class="join-grid">
           <div class="join-copy">
-            <p class="eyebrow">03 / mailing list</p>
+            <p class="eyebrow">02 / mailing list</p>
             <h2 id="join-title">get on<br>the list.</h2>
             <p>Event drops, presales, location reveals, occasional useful information. No feed. No algorithm. No daily newsletter.</p>
           </div>
@@ -226,10 +193,6 @@
               <span><b>SMS SIGNAL</b> — text me event drops, presales, guest spots and location reveals.</span>
             </label>
 
-            <label class="check-row" for="card-interest">
-              <input id="card-interest" name="black_card_interest" value="yes" type="checkbox">
-              <span><b>BLACK CARD</b> — let me know if a founding number is still available.</span>
-            </label>
 
             <p class="consent">By joining, you agree to receive Thrillwaukee event emails. If you check SMS SIGNAL, you also consent to recurring automated promotional and informational texts from Thrillwaukee. Message frequency varies. Message and data rates may apply. Reply STOP to cancel or HELP for help. SMS consent is not a condition of purchase. <a href="/privacy.html">privacy</a> · <a href="/terms.html">terms</a>.</p>
 
