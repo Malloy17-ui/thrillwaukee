@@ -4,15 +4,16 @@ The private dashboard is available at `/admin.html`. The page itself contains no
 
 ## Required Netlify environment variables
 
-Add these under **Project configuration → Environment variables**. Keep all three secret and available to Functions:
+Add these under **Project configuration → Environment variables** and make them available to **Functions**:
 
 - `ADMIN_PASSWORD` — the founder-console password. Do not commit it to GitHub.
-- `NETLIFY_AUTH_TOKEN` — a Netlify Personal Access Token with access to this project. The dashboard uses it server-side to read verified `thrillwaukee-list` form submissions.
 - `STRIPE_SECRET_KEY` — the Stripe live-mode secret key. It stays server-side and is used only to list completed Checkout Sessions.
+
+You do **not** need a Netlify Personal Access Token. Verified signup events are copied into a private site-wide Netlify Blobs store, and Netlify automatically supplies the credentials Functions need to access that store.
 
 Optional:
 
-- `STRIPE_PAYMENT_LINK_ID` — the Stripe `plink_...` ID behind the Thrillwaukee Buy Button. Set this to restrict the dashboard to payments made through that specific payment link. Without it, the dashboard warns that it is showing all completed Checkout payments on the Stripe account.
+- `STRIPE_PAYMENT_LINK_ID` — the actual Stripe Payment Link object ID beginning with `plink_`. Set this to restrict the dashboard to purchases made through the Thrillwaukee Payment Link. If omitted or malformed, the dashboard safely falls back to all completed Checkout Sessions and shows a warning.
 
 Redeploy after adding or changing environment variables.
 
@@ -20,9 +21,15 @@ Redeploy after adding or changing environment variables.
 
 The allowed login email is hard-coded server-side as the founder email. The password is read only from `ADMIN_PASSWORD`. A successful login creates a signed, HttpOnly, Secure, SameSite=Strict cookie lasting 12 hours. Dashboard API responses use `Cache-Control: no-store`.
 
+## Signup storage
+
+New verified `thrillwaukee-list` submissions are copied into the private `thrillwaukee-signups` Netlify Blobs store by `form-submitted.mjs`. Netlify Blobs encrypts stored data at rest and in transit.
+
+Because this replaces the old Forms API/PAT approach, submissions that happened **before this Blob integration was deployed** remain in Netlify Forms but will not automatically appear in the new admin ledger. New submissions will.
+
 ## Data shown
 
-The dashboard merges Netlify form submissions and paid Stripe Checkout Sessions by normalized email address.
+The dashboard merges stored signup records and paid Stripe Checkout Sessions by normalized email address.
 
 It displays:
 
@@ -41,4 +48,4 @@ If someone pays with a different email than they used on the signup form, they a
 
 ## Limits
 
-The dashboard reads up to 1,000 recent form submissions and 1,000 recent completed Checkout Sessions per load. It will show a warning if a safety limit is reached.
+The dashboard reads up to 1,000 stored signup records and 1,000 recent completed Checkout Sessions per load. It will show a warning if a safety limit is reached.
