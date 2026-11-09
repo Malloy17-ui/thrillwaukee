@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#8d7cf6">
+  <title>Admin — THRILLWAUKEE</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-top">
+      <div>
+        <a class="admin-brand" href="/">THRILLWAUKEE</a>
+        <span class="admin-tag">PRIVATE OPS / 00414</span>
+      </div>
+      <button id="logout" class="tiny-button" type="button" hidden>logout</button>
+    </header>
+
+    <section id="login-view" class="login-card">
+      <div class="window-bar"><span>admin_login.cgi</span><span>secure</span></div>
+      <div class="login-inner">
+        <p class="eyebrow">restricted access</p>
+        <h1>founder<br>console.</h1>
+        <p class="login-copy">This page contains private signup and payment records.</p>
+        <form id="login-form" autocomplete="on">
+          <label>
+            <span>email</span>
+            <input id="admin-email" name="email" type="email" autocomplete="username" required>
+          </label>
+          <label>
+            <span>password</span>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit">[ SIGN IN ]</button>
+          <p id="login-status" class="status-text" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard-view" hidden>
+      <div class="dashboard-heading">
+        <div>
+          <p class="eyebrow">private operations</p>
+          <h1>guest ledger.</h1>
+          <p id="generated-at" class="status-text"></p>
+        </div>
+        <button id="refresh" class="tiny-button" type="button">refresh data</button>
+      </div>
+
+      <div id="warnings" class="warnings" hidden></div>
+
+      <section class="stats" aria-label="Guest summary">
+        <article><span>people</span><strong id="stat-total">0</strong></article>
+        <article><span>paid</span><strong id="stat-paid">0</strong></article>
+        <article><span>unpaid</span><strong id="stat-unpaid">0</strong></article>
+        <article><span>sms opt-in</span><strong id="stat-sms">0</strong></article>
+        <article><span>paid / no signup</span><strong id="stat-paid-only">0</strong></article>
+      </section>
+
+      <section class="ledger-panel">
+        <div class="window-bar"><span>guest_ledger.csv</span><span id="row-count">0 rows</span></div>
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="search name, email, phone, campus..." aria-label="Search guest ledger">
+          <select id="payment-filter" aria-label="Payment status">
+            <option value="all">all records</option>
+            <option value="paid">paid</option>
+            <option value="unpaid">unpaid</option>
+            <option value="sms">sms opt-in</option>
+          </select>
+          <button id="export" class="tiny-button" type="button">export csv</button>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>status</th>
+                <th>name</th>
+                <th>email</th>
+                <th>phone</th>
+                <th>campus</th>
+                <th>birthday</th>
+                <th>sms</th>
+                <th>amount</th>
+                <th>signed up</th>
+                <th>paid at</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-body"></tbody>
+          </table>
+        </div>
+        <p class="ledger-note">Paid/unpaid matching is by email address. A Stripe buyer using a different email from the signup form will appear as a separate paid record.</p>
+      </section>
+    </section>
+  </main>
+  <script src="/admin.js" defer></script>
+</body>
+</html>
