@@ -1,6 +1,11 @@
 # Thrillwaukee signup integration
 
-The public signup form remains a Netlify Form. After Netlify verifies a `thrillwaukee-list` submission, `netlify/functions/form-submitted.mjs` syncs the contact into Brevo.
+The public signup form remains a Netlify Form. After Netlify verifies a `thrillwaukee-list` submission, `netlify/functions/form-submitted.mjs` performs two independent server-side actions:
+
+1. stores the full signup record in the private `thrillwaukee-signups` Netlify Blobs store for the founder admin dashboard
+2. syncs the marketing contact into Brevo
+
+No Netlify Personal Access Token is required for Blob access from Netlify Functions.
 
 ## Required Netlify environment variables
 
@@ -15,17 +20,25 @@ Optional:
 
 Redeploy after changing environment variables.
 
-## What gets synced
+## What gets stored
 
-- Email: always, because the email field is required.
-- First name: synced to Brevo `FIRSTNAME`.
-- Phone: synced to Brevo `SMS` only when the visitor explicitly checks **SMS SIGNAL**.
-- Campus, birthday, and the complete submission remain available in Netlify Forms even if they are not mirrored into Brevo.
+The private Blob record keeps:
+
+- first name
+- email
+- phone
+- campus
+- birthday
+- SMS opt-in
+- first signup timestamp
+- last update timestamp
+
+Brevo receives the email and first name, plus the phone in its SMS field only when the visitor explicitly checks **SMS SIGNAL**.
 
 ## SMS compliance / activation
 
-The form now separates SMS consent from ordinary list signup and links to public Privacy and Terms pages. Do not send US marketing SMS until the sending number/sender has completed the registration/compliance process required by the SMS provider and carriers.
+The form separates SMS consent from ordinary list signup and links to public Privacy and Terms pages. Do not send US marketing SMS until the sending number/sender has completed the registration/compliance process required by the SMS provider and carriers.
 
 ## Failure behavior
 
-Netlify stores the verified form submission first. If Brevo is unavailable or misconfigured, the event function logs the sync failure instead of deleting the lead.
+Netlify Forms still keeps the verified original submission. Blob storage and Brevo sync run independently; failure of one does not intentionally erase the other.
