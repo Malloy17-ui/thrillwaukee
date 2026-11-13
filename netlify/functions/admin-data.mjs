@@ -203,6 +203,8 @@ export default async request => {
   }
 
   const warnings = [];
+  let signupAvailable = true;
+  let paymentAvailable = true;
   let signupResult = { rows: [], truncated: false };
   let paymentResult = {
     rows: [],
@@ -214,6 +216,7 @@ export default async request => {
   try {
     signupResult = await getSignups();
   } catch (error) {
+    signupAvailable = false;
     console.error('Admin Brevo signup load failed', error);
     warnings.push(error.message);
   }
@@ -221,6 +224,7 @@ export default async request => {
   try {
     paymentResult = await getPayments();
   } catch (error) {
+    paymentAvailable = false;
     console.error('Admin Stripe data load failed', error);
     warnings.push(error.message);
   }
@@ -247,6 +251,10 @@ export default async request => {
   return json({
     generatedAt: new Date().toISOString(),
     signedInAs: session.email,
+    sources: {
+      signups: signupAvailable,
+      payments: paymentAvailable,
+    },
     summary,
     warnings,
     people,

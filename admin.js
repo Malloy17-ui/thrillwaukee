@@ -134,12 +134,17 @@
     }).join('');
   }
 
-  function renderSummary(summary) {
+  function renderSummary(summary, sources = {}) {
+    const signupsAvailable = sources.signups !== false;
+    const paymentsAvailable = sources.payments !== false;
+
     $('#stat-total').textContent = summary.total ?? 0;
-    $('#stat-paid').textContent = summary.paid ?? 0;
-    $('#stat-unpaid').textContent = summary.unpaid ?? 0;
-    $('#stat-sms').textContent = summary.smsOptIn ?? 0;
-    $('#stat-paid-only').textContent = summary.paidWithoutSignup ?? 0;
+    $('#stat-paid').textContent = paymentsAvailable ? (summary.paid ?? 0) : '—';
+    $('#stat-unpaid').textContent = signupsAvailable ? (summary.unpaid ?? 0) : '—';
+    $('#stat-sms').textContent = signupsAvailable ? (summary.smsOptIn ?? 0) : '—';
+    $('#stat-paid-only').textContent = signupsAvailable && paymentsAvailable
+      ? (summary.paidWithoutSignup ?? 0)
+      : '—';
   }
 
   async function loadData() {
@@ -148,7 +153,7 @@
     try {
       const data = await api('/.netlify/functions/admin-data');
       people = data.people || [];
-      renderSummary(data.summary || {});
+      renderSummary(data.summary || {}, data.sources || {});
       renderWarnings(data.warnings || []);
       $('#generated-at').textContent = 'generated ' + date(data.generatedAt);
       applyFilters();
