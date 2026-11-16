@@ -8,12 +8,12 @@ const yes = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toL
 const money = amount => Number.isFinite(amount) ? amount : null;
 
 const EXCLUDED_LEGACY_EMAILS = new Set([
-  'donovanyesko@yahoo.com',
-  'ramosruben86@gmail.com',
-  'kwisth0@gmail.com',
-  'clojodo11@gmail.com',
-  'jake1.heffern@gmail.com',
-  'n1snx3@gmail.com',
+  'maxxthemate+monthly@gmail.com',
+  'maxxthemate+annual@gmail.com',
+  'noah@coherent.fyi',
+  'arkmalloy@gmail.com',
+  'noah@malloylabs.net',
+  'maxxhartounian@gmail.com',
 ]);
 
 const isExcludedLegacyEmail = value => EXCLUDED_LEGACY_EMAILS.has(normalizeEmail(value));
