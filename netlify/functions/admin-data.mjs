@@ -7,6 +7,17 @@ const normalizeEmail = value => String(value || '').trim().toLowerCase();
 const yes = value => ['yes', 'true', '1', 'on'].includes(String(value || '').toLowerCase());
 const money = amount => Number.isFinite(amount) ? amount : null;
 
+const EXCLUDED_LEGACY_EMAILS = new Set([
+  'maxxthemate+monthly@gmail.com',
+  'maxxthemate+annual@gmail.com',
+  'noah@coherent.fyi',
+  'arkmalloy@gmail.com',
+  'noah@malloylabs.net',
+  'maxxhartounian@gmail.com',
+]);
+
+const isExcludedLegacyEmail = value => EXCLUDED_LEGACY_EMAILS.has(normalizeEmail(value));
+
 async function brevoFetch(path) {
   const key = process.env.BREVO_API_KEY;
   if (!key) throw new Error('BREVO_API_KEY is not configured');
@@ -162,10 +173,12 @@ function mergeRecords(signups, payments) {
   const map = new Map();
 
   for (const signup of signups.map(signupRecord)) {
+    if (isExcludedLegacyEmail(signup.email)) continue;
     map.set(signup.key, signup);
   }
 
   for (const payment of payments.map(paymentRecord)) {
+    if (isExcludedLegacyEmail(payment.email)) continue;
     const existing = map.get(payment.key);
 
     if (!existing) {
